@@ -12,7 +12,7 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import FlowNode from "../FlowNode/FlowNode";
 import  endSurvey from './../../assets/images/end-survey.png';
-import "./BranchingFlow.css";
+import "./TemplateBranchingFlow.css";
 
 const defaultEdgeOptions = {
   style: { strokeWidth: 2, stroke: "#09c809" },
