@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import HorizontalTabs from "../HorizontalTabs/HorizontalTabs";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PersonPinIcon from "@mui/icons-material/PersonPin";
-import TemplateQuestions from "../TemplateQuestions/TemplateQuestions";
-import TemplateBranchingFlow from "../../components/TemplateBranchingFlow/TemplateBranchingFlow";
 import RadioQuestionTemplate from "../RadioQuestionTemplate/RadioQuestionTemplate";
+import TemplateQuestions from './TemplateQuestions/TemplateQuestions';
+import TemplateBranchingFlow from './TemplateBranchingFlow/TemplateBranchingFlow'
 
 const SurveyTemplate = () => {
   const [templateQuestionsList, setTemplateQuestionsList] = useState([]);

@@ -9,9 +9,8 @@ import ReactFlow, {
   useEdgesState,
   MarkerType,
 } from "reactflow";
+import flowNode from './FlowNode/FlowNode'
 import "reactflow/dist/style.css";
-import FlowNode from "../FlowNode/FlowNode";
-import  endSurvey from './../../assets/images/end-survey.png';
 import "./TemplateBranchingFlow.css";
 
 const defaultEdgeOptions = {
@@ -24,7 +23,7 @@ const defaultEdgeOptions = {
 };
 
 const nodeTypes = {
-  flowNode: FlowNode,
+  flowNode: flowNode,
 };
 
 const initialNodes = [
