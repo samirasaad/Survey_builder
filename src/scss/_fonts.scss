@@ -1,0 +1,26 @@
+/******************************  using font face ******************************/
+// @font-face {
+//   font-family: "LT-Azer-Regular";
+//   src: url("../assets/fonts/29LTAzer/29LT-Azer-Regular.OTF");
+// }
+// @font-face {
+//   font-family: "LT-Azer-Medium";
+//   src: url("../assets/fonts/29LTAzer/29LT-Azer-Medium.OTF");
+// }
+// @font-face {
+//   font-family: "LT-Azer-Bold";
+//   src: url("../assets/fonts/29LTAzer/29LT-Azer-Bold.OTF");
+// }
+
+/******************************  using font face ******************************/
+@each $fontFamily in $fontFamilies {
+  @each $fontExtention in $fontExtentions {
+    @font-face {
+      font-family: #{$fontFamily};
+      src: url("../assets/fonts/Patrick_Hand/#{$fontFamily}.#{$fontExtention}");
+    }
+    .#{$fontFamily} {
+      font-family: #{$fontFamily};
+    }
+  }
+}

@@ -1,0 +1,39 @@
+@import "./../scss/variables";
+body,
+html {
+  color: $drakPrimaryColor;
+  font-size: 16px;
+  overflow: hidden visible !important;
+  font-family: LT-Azer-Regular;
+  min-width: 100% !important;
+}
+
+/* scroll-width */
+::-webkit-scrollbar {
+  width: 4px !important;
+}
+/* scroll-track */
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+  padding-left: 10px;
+}
+/* scroll-handle */
+::-webkit-scrollbar-thumb {
+  background-color: $primaryColor !important;
+  border-radius: 3px;
+  width: 4px;
+  height: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+button,
+input[type="text"] {
+  border: none;
+  outline: none !important;
+  &:focus {
+    outline: none !important;
+  }
+}
