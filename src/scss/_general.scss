@@ -1,10 +1,10 @@
 @import "./../scss/variables";
 body,
 html {
-  color: $drakPrimaryColor;
+  // color: $drakPrimaryColor;
   font-size: 16px;
   overflow: hidden visible !important;
-  font-family: LT-Azer-Regular;
+  // font-family: LT-Azer-Regular;
   min-width: 100% !important;
 }
 
@@ -20,7 +20,7 @@ html {
 }
 /* scroll-handle */
 ::-webkit-scrollbar-thumb {
-  background-color: $primaryColor !important;
+  // background-color: $primaryColor !important;
   border-radius: 3px;
   width: 4px;
   height: 10px;

@@ -13,14 +13,14 @@
 // }
 
 /******************************  using font face ******************************/
-@each $fontFamily in $fontFamilies {
-  @each $fontExtention in $fontExtentions {
-    @font-face {
-      font-family: #{$fontFamily};
-      src: url("../assets/fonts/Patrick_Hand/#{$fontFamily}.#{$fontExtention}");
-    }
-    .#{$fontFamily} {
-      font-family: #{$fontFamily};
-    }
-  }
-}
+// @each $fontFamily in $fontFamilies {
+//   @each $fontExtention in $fontExtentions {
+//     @font-face {
+//       font-family: #{$fontFamily};
+//       src: url("../assets/fonts/Patrick_Hand/#{$fontFamily}.#{$fontExtention}");
+//     }
+//     .#{$fontFamily} {
+//       font-family: #{$fontFamily};
+//     }
+//   }
+// }
