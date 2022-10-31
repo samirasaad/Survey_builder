@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import "./HorizontalTabs.scss";
 
 const TabPanel = (props) => {
   const { children, value, index, ...other } = props;
@@ -11,8 +12,8 @@ const TabPanel = (props) => {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`option-tabpanel-${index}`}
-      aria-labelledby={`option-tab-${index}`}
+      id={`horizontal-option-tabpanel-${index}`}
+      aria-labelledby={`horizontal-option-tab-${index}`}
       {...other}
     >
       {value === index && <Box p={3}>{children}</Box>}
@@ -26,7 +27,12 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-const HorizontalTabs = ({ tabsList, handleTabChange, currentTab ,withIcons}) => {
+const HorizontalTabs = ({
+  tabsList,
+  handleTabChange,
+  currentTab,
+  withIcons,
+}) => {
   return (
     <>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -37,16 +43,17 @@ const HorizontalTabs = ({ tabsList, handleTabChange, currentTab ,withIcons}) => 
         >
           {tabsList.map((opt) => (
             <Tab
-            icon={opt.icon }
+              key={`horizontal-option-tab-${opt.id}`}
+              icon={opt.icon}
               label={`${opt.title}`}
-              id={`option-tab-${opt.id}`}
-              aria-controls={`option-tabpanel-${opt.id}`}
+              id={`horizontal-option-tab-${opt.id}`}
+              aria-controls={`horizontal-option-tabpanel-${opt.id}`}
             />
           ))}
         </Tabs>
       </Box>
       {tabsList.map((opt) => (
-        <TabPanel value={currentTab} index={opt.id}>
+        <TabPanel value={currentTab} index={opt.id} key={`horizontal-option-tabpanel-${opt.id}`}>
           {opt.content}
         </TabPanel>
       ))}

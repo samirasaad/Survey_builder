@@ -110,9 +110,9 @@ const SurveyTemplate = () => {
   const getQuestionComponnet = (ques, questionIndex) => {
     switch (ques.questionType) {
       case "dropDown":
-        return <p key={`question-${questionIndex}`}>drop down</p>;
+        return <div key={`question-${questionIndex}`}>drop down</div>;
       case "multiSelect":
-        return <p key={`question-${questionIndex}`}>multi</p>;
+        return <div key={`question-${questionIndex}`}>multi</div>;
       case "radio":
         return (
           <div key={`question-${questionIndex}`}>
@@ -164,7 +164,7 @@ const SurveyTemplate = () => {
       />
       {/************************* render question types ***************/}
       {/* list of questions ltypes should be moved to separet compo */}
-      <div onClick={(e) => addQuestion(e, "dropDown")}>
+      {/* <div onClick={(e) => addQuestion(e, "dropDown")}>
         <p>drop down</p>
       </div>
       <div onClick={(e) => addQuestion(e, "multiSelect")}>
@@ -172,7 +172,7 @@ const SurveyTemplate = () => {
       </div>
       <div onClick={(e) => addQuestion(e, "radio")}>
         <p>radio button [yes/no]</p>
-      </div>
+      </div> */}
     </>
   );
 };

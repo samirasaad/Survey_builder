@@ -10,13 +10,13 @@ const TabPanel = ({ children, value, index, ...other }) => {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`option-tabpanel-${index}`}
-      aria-labelledby={`option-tab-${index}`}
+      id={`vertical-option-tabpanel-${index}`}
+      aria-labelledby={`vertical-option-tab-${index}`}
       {...other}
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+         {children}
         </Box>
       )}
     </div>
@@ -50,15 +50,16 @@ const VerticalTabs = ({ tabsList, value, handleTabChange }) => {
         >
           {tabsList.map((opt) => (
             <Tab
+            key={`vertical-option-tab-${opt.id}`}
               label={`${opt.title}`}
-              id={`option-tab-${opt.id}`}
-              aria-controls={`option-tabpanel-${opt.id}`}
+              id={`vertical-option-tab-${opt.id}`}
+              aria-controls={`vertical-option-tabpanel-${opt.id}`}
             />
           ))}
         </Tabs>
 
         {tabsList.map((opt) => (
-          <TabPanel value={value} index={opt.id}>
+          <TabPanel value={value} index={opt.id}  key={`vertical-option-tabpanel-${opt.id}`}>
             {opt.content}
           </TabPanel>
         ))}

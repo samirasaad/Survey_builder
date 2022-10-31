@@ -16,25 +16,25 @@ const SideMenu = () => {
       id: 1,
       title: "Logout",
       icon: "test",
-      content: <p>test survey</p>,
+      content: <div>test survey</div>,
     },
     {
       id: 2,
       title: "Welcome page",
       icon: "test",
-      content: <p>test survey 1</p>,
+      content: <div>test survey 1</div>,
     },
     {
       id: 3,
       title: "Exit page",
       icon: "test",
-      content: <p>test survey 2</p>,
+      content: <div>test survey 2</div>,
     },
     {
       id: 4,
       title: "Logout",
       icon: "test",
-      content: <p>test survey 43</p>,
+      content: <div>test survey 43</div>,
     },
   ];
 
