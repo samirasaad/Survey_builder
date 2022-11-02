@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import Button from "../../../controls/Button/Button";
 import Modal from "../../../sharedUi/Modal/Modal";
+import SharedTooltip from "../../../sharedUi/Tooltip/Tooltip";
 import SingleQuestion from "./SingleQuestion";
+import Button from "@mui/material/Button";
+import Btn from "./../../../controls/Btn/Btn";
 
 const QuestionsListTab = ({ questionsList }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,8 +22,8 @@ const QuestionsListTab = ({ questionsList }) => {
     <>
       <p>Are you sure you want to delete this question ? </p>
       <div className="d-flex">
-        <Button content="Yes" handleClick={handleDeleteQuestion} />
-        <Button
+        <Btn content="Yes" handleClick={handleDeleteQuestion} />
+        <Btn
           content="No"
           handleClick={(e) => handleModalState(e, false, null)}
         />
@@ -35,17 +37,21 @@ const QuestionsListTab = ({ questionsList }) => {
         {questionsList.map((question) => (
           <div className="d-flex">
             <SingleQuestion question={question} key={question.id} />
-            <Button
-              className="mx-2"
-              handleClick={(e) => handleModalState(e, true, question.id)}
-              content="edit"
+            <SharedTooltip
+              tooltipTargetElement={
+                <Button onClick={(e) => handleModalState(e, true, question.id)}>
+                  Arrow
+                </Button>
+              }
+              title="Edit question"
             />
-            <Button
+
+            <Btn
               className="mx-2"
               handleClick={(e) => handleModalState(e, true, question.id)}
               content="duplicate"
             />
-            <Button
+            <Btn
               className="mx-2"
               handleClick={(e) => handleModalState(e, true, question.id)}
               content="delete"
@@ -56,8 +62,6 @@ const QuestionsListTab = ({ questionsList }) => {
           isOpen={isOpen}
           renderModalContent={(e) => renderModalContent(e)}
           handleModalState={handleModalState}
-          // handleSubmit={handleDeleteQuestion}
-          // handleCancel={(e)=>handleModalState(e,false)}
         />
       </>
     ) : (

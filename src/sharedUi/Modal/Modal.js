@@ -18,7 +18,7 @@ const style = {
   p: 4,
 };
 
-const SharedModal = ({ renderModalContent, isOpen, handleModalState }) => {
+const SharedModal = ({ renderModalContent, isOpen=false, handleModalState }) => {
   return (
     <div>
       <Modal
