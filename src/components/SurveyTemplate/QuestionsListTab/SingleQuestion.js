@@ -16,9 +16,6 @@ const SingleQuestion = ({ question }) => {
     <div className="d-flex">
       <p>{question.content}</p>
       <p>{renderQuestionType(question.type)}</p>
-      <span className="mx-2">delete</span>
-      <span className="mx-2">duplicate</span>
-      <span className="mx-2">edit</span>
     </div>
   );
 };
