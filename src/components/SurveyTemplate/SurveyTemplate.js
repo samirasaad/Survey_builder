@@ -3,8 +3,9 @@ import HorizontalTabs from "../HorizontalTabs/HorizontalTabs";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PersonPinIcon from "@mui/icons-material/PersonPin";
 import RadioQuestionTemplate from "../RadioQuestionTemplate/RadioQuestionTemplate";
-import TemplateQuestions from './TemplateQuestions/TemplateQuestions';
-import TemplateBranchingFlow from './TemplateBranchingFlow/TemplateBranchingFlow'
+import AddEditQuestionsList from "./AddEditQuestionsList/AddEditQuestionsList";
+import BranchingFlowTab from "./BranchingFlowTab/BranchingFlowTab";
+import QuestionsListTab from "./QuestionsListTab/QuestionsListTab";
 
 const SurveyTemplate = () => {
   const [templateQuestionsList, setTemplateQuestionsList] = useState([]);
@@ -14,7 +15,37 @@ const SurveyTemplate = () => {
     setCurrentTab(newValue);
   };
 
-//   generate random number to generate id for both [question and answer]
+  // dummy questions list
+
+  const dummuyQuestinsList = [
+    {
+      id: 1,
+      content: "q 1",
+      type: 1,
+    },
+    {
+      id: 2,
+      content: "q 2",
+      type: 2,
+    },
+    {
+      id: 3,
+      content: "q 3",
+      type: 1,
+    },
+    {
+      id: 4,
+      content: "q 4",
+      type: 2,
+    },
+    {
+      id: 5,
+      content: "q 5",
+      type: 2,
+    },
+  ];
+
+  //   generate random number to generate id for both [question and answer]
   const generateRandomNum = (num) => {
     return `${Math.random().toFixed(num).split(".")[1]}`;
   };
@@ -134,23 +165,27 @@ const SurveyTemplate = () => {
     }
   };
 
+  // questions list & branching tabs
   const TemplateOptions = [
     {
       id: 0,
       title: "questions list",
       icon: <FavoriteIcon />,
       content: (
-        <TemplateQuestions
-          templateQuestionsList={templateQuestionsList}
-          getQuestionComponnet={getQuestionComponnet}
-        />
+        <QuestionsListTab questionsList={dummuyQuestinsList} />
+
+        // <AddEditQuestionsList
+        //
+        //   templateQuestionsList={templateQuestionsList}
+        //   getQuestionComponnet={getQuestionComponnet}
+        // />
       ),
     },
     {
       id: 1,
       title: "branching/logic",
       icon: <PersonPinIcon />,
-      content: <TemplateBranchingFlow />,
+      content: <BranchingFlowTab />,
     },
   ];
 
@@ -162,6 +197,7 @@ const SurveyTemplate = () => {
         currentTab={currentTab}
         withIcons={true}
       />
+
       {/************************* render question types ***************/}
       {/* list of questions ltypes should be moved to separet compo */}
       {/* <div onClick={(e) => addQuestion(e, "dropDown")}>

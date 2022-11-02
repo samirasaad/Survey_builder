@@ -3,7 +3,9 @@ import SurveyTemplate from "../SurveyTemplate/SurveyTemplate";
 import VerticalTabs from "../VerticalTabs/VerticalTabs";
 
 const SideMenu = () => {
-  const [currentTab, setCurrentTab] = React.useState(0);
+  // const [currentTab, setCurrentTab] = React.useState(
+  //   +window.location.href.split("?")[1] || 0
+  // );
 
   const sideMenuOptions = [
     {
@@ -38,18 +40,27 @@ const SideMenu = () => {
     },
   ];
 
+  const [currentTab, setCurrentTab] = React.useState(
+    0
+    // sideMenuOptions.find(opt=>opt.id === (+window.location.href.split("?")[1] || 0)).id
+  );
+  // console.log( sideMenuOptions.find(opt=>opt.id === (+window.location.href.split("?")[1] || 0)).id)
+
   const handleTabChange = (event, newValue) => {
     setCurrentTab(newValue);
+
+    //
+    // history.push(?sideMenuOptions.find(i=>i.id === currentTab).title))
+    // new URLSearchParams(sideMenuOptions.find(i=>i.id === currentTab).title)
   };
 
   return (
-    <div>
-      <VerticalTabs
-        tabsList={sideMenuOptions}
-        value={currentTab}
-        handleTabChange={handleTabChange}
-      />
-    </div>
+    <VerticalTabs
+      tabPanelClasses="w-100"
+      tabsList={sideMenuOptions}
+      currentTab={currentTab}
+      handleTabChange={handleTabChange}
+    />
   );
 };
 

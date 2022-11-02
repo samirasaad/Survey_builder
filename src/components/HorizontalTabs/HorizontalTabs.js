@@ -53,7 +53,11 @@ const HorizontalTabs = ({
         </Tabs>
       </Box>
       {tabsList.map((opt) => (
-        <TabPanel value={currentTab} index={opt.id} key={`horizontal-option-tabpanel-${opt.id}`}>
+        <TabPanel
+          value={currentTab}
+          index={opt.id}
+          key={`horizontal-option-tabpanel-${opt.id}`}
+        >
           {opt.content}
         </TabPanel>
       ))}

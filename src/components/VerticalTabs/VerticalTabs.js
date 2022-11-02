@@ -2,7 +2,6 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 const TabPanel = ({ children, value, index, ...other }) => {
@@ -14,11 +13,7 @@ const TabPanel = ({ children, value, index, ...other }) => {
       aria-labelledby={`vertical-option-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={3}>
-         {children}
-        </Box>
-      )}
+      {value === index && <Box p={3}>{children}</Box>}
     </div>
   );
 };
@@ -29,42 +24,50 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-const VerticalTabs = ({ tabsList, value, handleTabChange }) => {
+const VerticalTabs = ({
+  tabsList,
+  tabPanelClasses,
+  currentTab,
+  handleTabChange,
+}) => {
   return (
-    <div>
-      <Box
-        sx={{
-          flexGrow: 1,
-          bgcolor: "background.paper",
-          display: "flex",
-          height: 224,
-        }}
+    <Box
+      sx={{
+        flexGrow: 1,
+        bgcolor: "background.paper",
+        display: "flex",
+        height: 224,
+      }}
+    >
+      <Tabs
+        orientation="vertical"
+        variant="scrollable"
+        value={currentTab}
+        onChange={handleTabChange}
+        aria-label="Vertical tabs example"
+        sx={{ borderRight: 1, borderColor: "divider" }}
       >
-        <Tabs
-          orientation="vertical"
-          variant="scrollable"
-          value={value}
-          onChange={handleTabChange}
-          aria-label="Vertical tabs example"
-          sx={{ borderRight: 1, borderColor: "divider" }}
-        >
-          {tabsList.map((opt) => (
-            <Tab
-            key={`vertical-option-tab-${opt.id}`}
-              label={`${opt.title}`}
-              id={`vertical-option-tab-${opt.id}`}
-              aria-controls={`vertical-option-tabpanel-${opt.id}`}
-            />
-          ))}
-        </Tabs>
-
         {tabsList.map((opt) => (
-          <TabPanel value={value} index={opt.id}  key={`vertical-option-tabpanel-${opt.id}`}>
-            {opt.content}
-          </TabPanel>
+          <Tab
+            key={`vertical-option-tab-${opt.id}`}
+            label={`${opt.title}`}
+            id={`vertical-option-tab-${opt.id}`}
+            aria-controls={`vertical-option-tabpanel-${opt.id}`}
+          />
         ))}
-      </Box>
-    </div>
+      </Tabs>
+
+      {tabsList.map((opt) => (
+        <TabPanel
+          className={tabPanelClasses}
+          value={currentTab}
+          index={opt.id}
+          key={`vertical-option-tabpanel-${opt.id}`}
+        >
+          {opt.content}
+        </TabPanel>
+      ))}
+    </Box>
   );
 };
 

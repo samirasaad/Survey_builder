@@ -11,7 +11,7 @@ import ReactFlow, {
 } from "reactflow";
 import flowNode from './FlowNode/FlowNode'
 import "reactflow/dist/style.css";
-import "./TemplateBranchingFlow.css";
+import "./BranchingFlowTab.css";
 
 const defaultEdgeOptions = {
   style: { strokeWidth: 2, stroke: "#09c809" },
@@ -110,7 +110,7 @@ const initialEdges = [
   //   },},
 ];
 
-const BranchingFlow = () => {
+const BranchingFlowTab = () => {
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
 
@@ -143,4 +143,4 @@ const BranchingFlow = () => {
   );
 };
 
-export default BranchingFlow;
+export default BranchingFlowTab;
