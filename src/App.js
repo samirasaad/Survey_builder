@@ -1,9 +1,15 @@
 import React from "react";
-import Home from "./containers/Home/Home";
-import './App.scss';
+import AppRoutes from "./routes/Routes";
+// import { createBrowserHistory } from 'history';
+// import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
+import { BrowserRouter } from "react-router-dom";
+import "./App.scss";
 
 const App = () => (
-  <Home />
-)
+  <BrowserRouter history={history}>
+    {/* <MaterialSnackbar {...snackbarInfo} /> */}
+    {AppRoutes}
+  </BrowserRouter>
+);
 
 export default App;
