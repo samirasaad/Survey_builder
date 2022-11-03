@@ -6,7 +6,7 @@ const Auth = {
     return redirect("/login");
   },
   isAuth() {
-    return localStorage.getItem("token");
+    return localStorage.getItem("isRegistered");
   },
 };
 export default Auth;

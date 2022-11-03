@@ -17,6 +17,10 @@ const Login = loadable(() => import("../containers/Login/Login"), {
   fallback: "..loading",
 });
 
+const Signup = loadable(() => import("../containers/SignUp/SignUp"), {
+  fallback: "..loading",
+});
+
 const Home = loadable(() => import("../containers/Home/Home"), {
   fallback: "..loading",
 });
@@ -44,6 +48,19 @@ const AppRoutes = (
         </Suspense>
       }
       path="/login"
+    />
+
+    <Route
+      element={
+        <Suspense fallback="..loading">
+          {/* <Navigationbar /> */}
+          <PublicRoute>
+            <Signup />
+          </PublicRoute>
+          {/* <Footer /> */}
+        </Suspense>
+      }
+      path="/signUp"
     />
 
     <Route

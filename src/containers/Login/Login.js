@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import InputField from "../../controls/InputField/InputField";
 import Btn from "../../controls/Btn/Btn";
 import { signInFirestore } from "../../firebase/authMethods";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [userInfo, setUserInfo] = useState({ email: null, password: null });
   //   const [email, setEmail] = useState(null);
   //   const [password, setPassword] = useState(null);
 
   const handleInputChange = (e) => {
-    setUserInfo({...userInfo,
-      [e.target.id]: e.target.value,
-    });
+    setUserInfo({ ...userInfo, [e.target.id]: e.target.value });
   };
 
   const handleSignIn = async (e, providerType) => {
@@ -26,6 +28,11 @@ const Login = () => {
         )
           .then((res) => {
             console.log(res.user);
+            localStorage.setItem("uid", res.user.uid);
+            localStorage.setItem("email", res.user.email);
+            localStorage.setItem("isRegistered", "true");
+            navigate("/");
+
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
@@ -42,6 +49,11 @@ const Login = () => {
         await signInFirestore("google")
           .then((res) => {
             console.log(res.user);
+            console.log(res.user);
+            localStorage.setItem("uid", res.user.uid);
+            localStorage.setItem("email", res.user.email);
+            localStorage.setItem("isRegistered", "true");
+            navigate("/");
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
@@ -57,6 +69,11 @@ const Login = () => {
         // setGithubLoading(true);
         await signInFirestore("github")
           .then((res) => {
+            console.log(res.user);
+            localStorage.setItem("uid", res.user.uid);
+            localStorage.setItem("email", res.user.email);
+            localStorage.setItem("isRegistered", "true");
+            navigate("/");
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
@@ -100,7 +117,7 @@ const Login = () => {
       />
       <Btn
         content="Sign in with google"
-        handleClick={(e) => handleSignIn(e, "goole")}
+        handleClick={(e) => handleSignIn(e, "google")}
         type="submit"
       />
       <Btn
@@ -108,6 +125,7 @@ const Login = () => {
         handleClick={(e) => handleSignIn(e, "github")}
         type="submit"
       />
+      <Link to="/signUp">Sign Up </Link>
     </>
   );
 };

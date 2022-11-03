@@ -5,15 +5,20 @@ import { auth } from "./";
 //   return auth().signInWithEmailAndPassword(email, password);
 // }
 
+function signUpFirestore(email, password) {
+  return auth().createUserWithEmailAndPassword(email, password);
+}
+
 function signInFirestore(provider, email, password) {
   const providerMethod =
     provider === "google"
       ? new auth.GoogleAuthProvider()
-      : provider === "github"
-      ? new auth.GithubAuthProvider()
-      : provider === "email&password" &&
+      : provider === "github" && new auth.GithubAuthProvider();
+
+  return provider === "google" || provider === "github"
+    ? auth().signInWithPopup(providerMethod)
+    : provider === "email&password" &&
         auth().signInWithEmailAndPassword(email, password);
-  return auth().signInWithPopup(providerMethod);
 }
 
 const firebaseSignout = () => {
@@ -28,4 +33,4 @@ const firebaseSignout = () => {
     });
 };
 
-export { signInFirestore, firebaseSignout };
+export { signInFirestore, firebaseSignout, signUpFirestore };
