@@ -1,9 +1,9 @@
-import { redirect } from "react-router-dom";
+import history from "../routes/history";
 
 const Auth = {
   signOut() {
     localStorage.clear();
-    return redirect("/login");
+    history.push("/login");
   },
   isAuth() {
     return localStorage.getItem("isRegistered");

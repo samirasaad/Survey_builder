@@ -5,11 +5,18 @@ import AppRoutes from "./routes/Routes";
 import { BrowserRouter } from "react-router-dom";
 import "./App.scss";
 
+import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
+import history from './routes/history';
+
+
 const App = () => (
-  <BrowserRouter >
+  <HistoryRouter history={history}>
+
+  {/* // <BrowserRouter > */}
     {/* <MaterialSnackbar {...snackbarInfo} /> */}
     {AppRoutes}
-  </BrowserRouter>
+  {/* </BrowserRouter> */}
+  </HistoryRouter>
 );
 
 export default App;

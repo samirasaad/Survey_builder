@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import BranchingFlowTab from "../../components/SurveyTemplate/BranchingFlowTab/BranchingFlowTab";
+import Btn from "../../controls/Btn/Btn";
 import { DB } from "../../firebase";
+import { firebaseSignout } from "../../firebase/authMethods";
+import Auth from "../../utils/Auth";
 import SideMenu from "./../../components/SideMenu/SideMenu";
 import { USERS } from "./../../utils/constants";
 
@@ -20,8 +23,15 @@ const Home = () => {
       });
   }, []);
 
+
+  const handleLogout =() =>{
+    firebaseSignout()
+    Auth.signOut()
+  }
+
   return (
     <section>
+      <Btn content='logout' handleClick={handleLogout}/>
       <SideMenu />
       {/* <BranchingFlowTab /> */}
     </section>

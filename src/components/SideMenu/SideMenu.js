@@ -1,4 +1,5 @@
 import React from "react";
+import Btn from "../../controls/Btn/Btn";
 import SurveyTemplate from "../SurveyTemplate/SurveyTemplate";
 import VerticalTabs from "../VerticalTabs/VerticalTabs";
 
@@ -32,12 +33,12 @@ const SideMenu = () => {
       icon: "test",
       content: <div>test survey 2</div>,
     },
-    {
-      id: 4,
-      title: "Logout",
-      icon: "test",
-      content: <div>test survey 43</div>,
-    },
+    // {
+    //   id: 4,
+    //   title: "Logout",
+    //   icon: "test",
+    //   content: <Btn content=''>test survey 43</Btn>,
+    // },
   ];
 
   const [currentTab, setCurrentTab] = React.useState(
