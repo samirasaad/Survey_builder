@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import "./App.scss";
 
 const App = () => (
-  <BrowserRouter history={history}>
+  <BrowserRouter >
     {/* <MaterialSnackbar {...snackbarInfo} /> */}
     {AppRoutes}
   </BrowserRouter>
