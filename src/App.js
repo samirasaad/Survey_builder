@@ -2,20 +2,17 @@ import React from "react";
 import AppRoutes from "./routes/Routes";
 // import { createBrowserHistory } from 'history';
 // import { unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
-import { BrowserRouter } from "react-router-dom";
 import "./App.scss";
 
 import { unstable_HistoryRouter as HistoryRouter } from "react-router-dom";
-import history from './routes/history';
-
+import History from "./routes/History";
 
 const App = () => (
-  <HistoryRouter history={history}>
-
-  {/* // <BrowserRouter > */}
+  <HistoryRouter history={History}>
+    {/* // <BrowserRouter > */}
     {/* <MaterialSnackbar {...snackbarInfo} /> */}
     {AppRoutes}
-  {/* </BrowserRouter> */}
+    {/* </BrowserRouter> */}
   </HistoryRouter>
 );
 

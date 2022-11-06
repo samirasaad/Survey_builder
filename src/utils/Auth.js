@@ -1,9 +1,9 @@
-import history from "../routes/history";
+import History from "../routes/History";
 
 const Auth = {
   signOut() {
     localStorage.clear();
-    history.push("/login");
+    History.push("/login");
   },
   isAuth() {
     return localStorage.getItem("isRegistered");
