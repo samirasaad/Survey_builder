@@ -25,6 +25,20 @@ const Home = loadable(() => import("../containers/Home/Home"), {
   fallback: "..loading",
 });
 
+const AddEditQuestion = loadable(
+  () => import("../containers/AddEditQuestion/AddEditQuestion"),
+  {
+    fallback: "..loading",
+  }
+);
+
+const PreviewTemplate = loadable(
+  () => import("../containers/PreviewTemplate/PreviewTemplate"),
+  {
+    fallback: "..loading",
+  }
+);
+
 // const NotFound = loadable(() => import("../components/NotFound/NotFound"), {
 //   fallback:'..loading',
 // });
@@ -88,11 +102,11 @@ const AppRoutes = (
           </Suspense>
         }
         // path="/template/1" => view template questions
-        // path="/question/1" => add new question in a template
+        // path="/question/1" => add new question in a template //nooooo
         path=":type/:templateId"
       />
 
-      <Route
+      {/* <Route
         element={
           <Suspense fallback="..loading">
             <PrivateRoute>
@@ -102,8 +116,45 @@ const AppRoutes = (
         }
         // path="/question/1/1" => edit existing question in a template
         path=":type/:templateId/:questionId"
+      /> */}
+    </Route>
+
+    {/*************************************  Preview template **********************************/}
+
+    <Route
+      element={
+        <Suspense fallback="..loading">
+          <PrivateRoute>
+            <PreviewTemplate />
+          </PrivateRoute>
+        </Suspense>
+      }
+      path="/preview"
+    >
+      <Route
+        element={
+          <Suspense fallback="..loading">
+            <PrivateRoute>
+              <PreviewTemplate />
+            </PrivateRoute>
+          </Suspense>
+        }
+        path=":templateId"
       />
     </Route>
+
+    {/************************************* Add/Edit question **********************************/}
+
+    {/* <Route
+      element={
+        <Suspense fallback="..loading">
+          <PrivateRoute>
+            <AddEditQuestion />
+          </PrivateRoute>
+        </Suspense>
+      }
+      path="preview/:templateId"
+    /> */}
 
     {/*************************************  Not found **********************************/}
 

@@ -1,13 +1,10 @@
 import React from "react";
-import Btn from "../../controls/Btn/Btn";
+import PreviewTemplate from "../../containers/PreviewTemplate/PreviewTemplate";
 import SurveyTemplate from "../SurveyTemplate/SurveyTemplate";
-import VerticalTabs from "../VerticalTabs/VerticalTabs";
+import { useNavigate } from "react-router-dom";
 
 const SideMenu = () => {
- 
-  // const [currentTab, setCurrentTab] = React.useState(
-  //   +window.location.href.split("?")[1] || 0
-  // );
+  const navigate = useNavigate();
 
   const sideMenuOptions = [
     {
@@ -15,12 +12,18 @@ const SideMenu = () => {
       title: "survey emplate",
       icon: "test",
       content: <SurveyTemplate />,
+      redirectionUrl: localStorage.getItem("templateId")
+        ? `/template/${localStorage.getItem("templateId")}`
+        : "/",
     },
     {
       id: 1,
       title: "preview",
       icon: "test",
-      content: <div>test survey</div>,
+      content: <PreviewTemplate />,
+      redirectionUrl: localStorage.getItem("templateId")
+        ? `/preview/${localStorage.getItem("templateId")}`
+        : "/preview",
     },
     {
       id: 2,
@@ -36,28 +39,13 @@ const SideMenu = () => {
     },
   ];
 
-  const [currentTab, setCurrentTab] = React.useState(
-    0
-    // sideMenuOptions.find(opt=>opt.id === (+window.location.href.split("?")[1] || 0)).id
-  );
-  // console.log( sideMenuOptions.find(opt=>opt.id === (+window.location.href.split("?")[1] || 0)).id)
-
-  const handleTabChange = (event, newValue) => {
-    setCurrentTab(newValue);
-
-    //
-    // history.push(?sideMenuOptions.find(i=>i.id === currentTab).title))
-    // new URLSearchParams(sideMenuOptions.find(i=>i.id === currentTab).title)
+  const handelRouting = (e, redirectURL) => {
+    navigate(redirectURL);
   };
 
-  return (
-    <VerticalTabs
-      tabPanelClasses="w-100"
-      tabsList={sideMenuOptions}
-      currentTab={currentTab}
-      handleTabChange={handleTabChange}
-    />
-  );
+  return sideMenuOptions.map((opt) => (
+    <div onClick={(e) => handelRouting(e, opt.redirectionUrl)}>{opt.title}</div>
+  ));
 };
 
 export default SideMenu;

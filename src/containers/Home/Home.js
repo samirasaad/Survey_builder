@@ -1,10 +1,11 @@
-import SideMenu from "./../../components/SideMenu/SideMenu";
+import SurveyTemplate from "../../components/SurveyTemplate/SurveyTemplate";
+import { useParams } from "react-router-dom";
 
 const Home = () => {
+  const { templateId } = useParams();
+
   return (
-    <section>
-      <SideMenu />
-    </section>
+    <section>{templateId ? <SurveyTemplate /> : <p>no template</p>}</section>
   );
 };
 

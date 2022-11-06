@@ -8,8 +8,8 @@ const PublicRoute = ({ children }) => {
     return (
       <Navigate
         to={
-          localStorage.getItem("onwerTemplateId") !== "null"
-            ? `/template/${localStorage.getItem("onwerTemplateId")}`
+          localStorage.getItem("templateId")
+            ? `/template/${localStorage.getItem("templateId")}`
             : "/"
         }
         replace

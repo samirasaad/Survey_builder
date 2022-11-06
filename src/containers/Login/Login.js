@@ -3,15 +3,10 @@ import InputField from "../../controls/InputField/InputField";
 import Btn from "../../controls/Btn/Btn";
 import { signInFirestore } from "../../firebase/authMethods";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { getOwnerSurveyTemplte } from "../../utils/shared";
 
 const Login = () => {
-  const navigate = useNavigate();
-
   const [userInfo, setUserInfo] = useState({ email: null, password: null });
-  //   const [email, setEmail] = useState(null);
-  //   const [password, setPassword] = useState(null);
 
   const handleInputChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.id]: e.target.value });
@@ -57,13 +52,6 @@ const Login = () => {
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
             getOwnerSurveyTemplte(res.user.uid);
-            // let TemplteObj = getOwnerSurveyTemplte(res.user.uid);
-            // let isUserHasTemplte = Object.keys(TemplteObj).length;
-
-            // isUserHasTemplte
-            //   ? navigate(`/template/${TemplteObj.owner_id}`)
-            //   : navigate("/");
-
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
@@ -84,8 +72,6 @@ const Login = () => {
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
             getOwnerSurveyTemplte(res.user.uid);
-
-            // navigate("/");
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);

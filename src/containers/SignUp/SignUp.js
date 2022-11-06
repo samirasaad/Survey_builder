@@ -24,7 +24,6 @@ const Signup = () => {
         localStorage.setItem("isRegistered", "true");
         getOwnerSurveyTemplte(res.user.uid);
 
-        // navigate("/");
         // setUser(res.user);
         // checkUserExistenece(res.user.providerData[0]);
         // setIsSnackbarOpen(false);

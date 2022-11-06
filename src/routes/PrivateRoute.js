@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import SideMenu from "../components/SideMenu/SideMenu";
 import Btn from "../controls/Btn/Btn";
 import { firebaseSignout } from "../firebase/authMethods";
 // import Footer from "../components/Footer/Footer";
@@ -19,7 +20,13 @@ const PrivateRoute = ({ children }) => {
       <>
         {/* <Navigationbar /> */}
         <Btn content="logout" handleClick={handleLogout} />
-        {children}
+        <div className="row">
+          <div className="col-3">
+            <SideMenu />
+          </div>
+        <div className="col-9">{children}</div>
+        </div>
+
         {/* <Footer /> */}
       </>
     );
