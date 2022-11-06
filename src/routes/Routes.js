@@ -36,6 +36,7 @@ const Home = loadable(() => import("../containers/Home/Home"), {
 
 const AppRoutes = (
   <Routes>
+    {/*************************************  login **********************************/}
     <Route
       index
       element={
@@ -50,6 +51,8 @@ const AppRoutes = (
       path="/login"
     />
 
+    {/***************************************  Sign up **********************************/}
+
     <Route
       element={
         <Suspense fallback="..loading">
@@ -63,6 +66,8 @@ const AppRoutes = (
       path="/signUp"
     />
 
+    {/***************************************  Home **********************************/}
+
     <Route
       element={
         <Suspense fallback="..loading">
@@ -71,13 +76,41 @@ const AppRoutes = (
           </PrivateRoute>
         </Suspense>
       }
+      // path="/" => owner has no survey template
       path="/"
-    />
+    >
+      <Route
+        element={
+          <Suspense fallback="..loading">
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          </Suspense>
+        }
+        // path="/template/1" => view template questions
+        // path="/question/1" => add new question in a template
+        path=":type/:templateId"
+      />
 
-    {/* NOT FOUND */}
+      <Route
+        element={
+          <Suspense fallback="..loading">
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          </Suspense>
+        }
+        // path="/question/1/1" => edit existing question in a template
+        path=":type/:templateId/:questionId"
+      />
+    </Route>
+
+    {/*************************************  Not found **********************************/}
+
     <Route
       element={
         <Suspense fallback="..loading">
+          <p>not found</p>
           {/* <Navigationbar /> */}
           {/* <NotFound /> */}
           {/* <Footer /> */}

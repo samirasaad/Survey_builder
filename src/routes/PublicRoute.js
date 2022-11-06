@@ -5,7 +5,16 @@ const PublicRoute = ({ children }) => {
   if (!Auth.isAuth()) {
     return <>{children}</>;
   } else {
-    return <Navigate to="/" replace />;
+    return (
+      <Navigate
+        to={
+          localStorage.getItem("onwerTemplateId") !== "null"
+            ? `/template/${localStorage.getItem("onwerTemplateId")}`
+            : "/"
+        }
+        replace
+      />
+    );
   }
 };
 export default PublicRoute;

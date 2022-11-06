@@ -4,6 +4,7 @@ import Btn from "../../controls/Btn/Btn";
 import { signInFirestore } from "../../firebase/authMethods";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { getOwnerSurveyTemplte } from "../../utils/shared";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,7 +32,9 @@ const Login = () => {
             localStorage.setItem("uid", res.user.uid);
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
-            navigate("/");
+            getOwnerSurveyTemplte(res.user.uid);
+
+            // navigate("/");
 
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
@@ -53,7 +56,14 @@ const Login = () => {
             localStorage.setItem("uid", res.user.uid);
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
-            navigate("/");
+            getOwnerSurveyTemplte(res.user.uid);
+            // let TemplteObj = getOwnerSurveyTemplte(res.user.uid);
+            // let isUserHasTemplte = Object.keys(TemplteObj).length;
+
+            // isUserHasTemplte
+            //   ? navigate(`/template/${TemplteObj.owner_id}`)
+            //   : navigate("/");
+
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
@@ -73,7 +83,9 @@ const Login = () => {
             localStorage.setItem("uid", res.user.uid);
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
-            navigate("/");
+            getOwnerSurveyTemplte(res.user.uid);
+
+            // navigate("/");
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
