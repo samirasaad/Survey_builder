@@ -4,6 +4,7 @@ import SurveyTemplate from "../SurveyTemplate/SurveyTemplate";
 import VerticalTabs from "../VerticalTabs/VerticalTabs";
 
 const SideMenu = () => {
+ 
   // const [currentTab, setCurrentTab] = React.useState(
   //   +window.location.href.split("?")[1] || 0
   // );
@@ -17,7 +18,7 @@ const SideMenu = () => {
     },
     {
       id: 1,
-      title: "Logout",
+      title: "preview",
       icon: "test",
       content: <div>test survey</div>,
     },
@@ -33,12 +34,6 @@ const SideMenu = () => {
       icon: "test",
       content: <div>test survey 2</div>,
     },
-    // {
-    //   id: 4,
-    //   title: "Logout",
-    //   icon: "test",
-    //   content: <Btn content=''>test survey 43</Btn>,
-    // },
   ];
 
   const [currentTab, setCurrentTab] = React.useState(

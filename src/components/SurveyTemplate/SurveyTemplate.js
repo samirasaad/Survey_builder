@@ -6,8 +6,10 @@ import RadioQuestionTemplate from "../RadioQuestionTemplate/RadioQuestionTemplat
 import AddEditQuestionsList from "./AddEditQuestionsList/AddEditQuestionsList";
 import BranchingFlowTab from "./BranchingFlowTab/BranchingFlowTab";
 import QuestionsListTab from "./QuestionsListTab/QuestionsListTab";
+import { useParams } from "react-router-dom";
 
 const SurveyTemplate = () => {
+  const { type, templateId, questionId } = useParams();
   const [templateQuestionsList, setTemplateQuestionsList] = useState([]);
   const [currentTab, setCurrentTab] = React.useState(0);
 
@@ -191,12 +193,18 @@ const SurveyTemplate = () => {
 
   return (
     <>
-      <HorizontalTabs
-        tabsList={TemplateOptions}
-        handleTabChange={handleTabChange}
-        currentTab={currentTab}
-        withIcons={true}
-      />
+      {type === "template" && templateId ? (
+        <HorizontalTabs
+          tabsList={TemplateOptions}
+          handleTabChange={handleTabChange}
+          currentTab={currentTab}
+          withIcons={true}
+        />
+      ) : type === "question" && templateId && questionId ? (
+        <p>edit</p>
+      ) : (
+        type === "question" && templateId && !questionId && <p>add</p>
+      )}
 
       {/************************* render question types ***************/}
       {/* list of questions ltypes should be moved to separet compo */}
