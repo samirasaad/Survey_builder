@@ -1,29 +1,27 @@
 import React from "react";
 import PreviewTemplate from "../../containers/PreviewTemplate/PreviewTemplate";
-import SurveyTemplate from "../SurveyTemplate/SurveyTemplate";
+import SurveyTemplate from "../../containers/SurveyTemplate/SurveyTemplate";
 import { useNavigate } from "react-router-dom";
+import NoSurveyTemplateFound from "../../containers/NoSurveyTemplateFound/NoSurveyTemplateFound";
 
 const SideMenu = () => {
   const navigate = useNavigate();
-
+  const templateId = localStorage.getItem("templateId");
+  console.log("templateId", templateId);
   const sideMenuOptions = [
     {
       id: 0,
       title: "survey emplate",
       icon: "test",
-      content: <SurveyTemplate />,
-      redirectionUrl: localStorage.getItem("templateId")
-        ? `/template/${localStorage.getItem("templateId")}`
-        : "/",
+      content: templateId ? <SurveyTemplate /> : <NoSurveyTemplateFound />,
+      redirectionUrl: templateId ? `/template/${templateId}` : "/",
     },
     {
       id: 1,
       title: "preview",
       icon: "test",
       content: <PreviewTemplate />,
-      redirectionUrl: localStorage.getItem("templateId")
-        ? `/preview/${localStorage.getItem("templateId")}`
-        : "/preview",
+      redirectionUrl: templateId ? `/preview/${templateId}` : "/preview",
     },
     {
       id: 2,

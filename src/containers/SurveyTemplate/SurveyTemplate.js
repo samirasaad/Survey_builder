@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import HorizontalTabs from "../HorizontalTabs/HorizontalTabs";
+import HorizontalTabs from "../../components/HorizontalTabs/HorizontalTabs";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PersonPinIcon from "@mui/icons-material/PersonPin";
-import RadioQuestionTemplate from "../RadioQuestionTemplate/RadioQuestionTemplate";
-import AddEditQuestionsList from "./AddEditQuestionsList/AddEditQuestionsList";
+import RadioQuestionTemplate from "../../components/RadioQuestionTemplate/RadioQuestionTemplate";
+// import AddEditQuestionsList from "../../components/";
 import BranchingFlowTab from "./BranchingFlowTab/BranchingFlowTab";
 import QuestionsListTab from "./QuestionsListTab/QuestionsListTab";
 import { useParams } from "react-router-dom";
@@ -193,7 +193,7 @@ const SurveyTemplate = () => {
 
   return (
     <>
-      {type === "template" && templateId ? (
+      {templateId ? (
         <HorizontalTabs
           tabsList={TemplateOptions}
           handleTabChange={handleTabChange}

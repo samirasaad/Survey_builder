@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import loadable from "@loadable/component";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import SurveyTemplate from "../containers/SurveyTemplate/SurveyTemplate";
 // const Navigationbar = loadable(
 //   () => import("../components/Navigationbar/Navigationbar"),
 //   {
@@ -21,7 +22,7 @@ const Signup = loadable(() => import("../containers/SignUp/SignUp"), {
   fallback: "..loading",
 });
 
-const Home = loadable(() => import("../containers/Home/Home"), {
+const NoSurveyTemplateFound = loadable(() => import("../containers/NoSurveyTemplateFound/NoSurveyTemplateFound"), {
   fallback: "..loading",
 });
 
@@ -82,43 +83,41 @@ const AppRoutes = (
 
     {/***************************************  Home **********************************/}
 
+    {/*   owner has no survey template */}
     <Route
       element={
         <Suspense fallback="..loading">
           <PrivateRoute>
-            <Home />
+            <NoSurveyTemplateFound />
           </PrivateRoute>
         </Suspense>
       }
-      // path="/" => owner has no survey template
       path="/"
-    >
-      <Route
-        element={
-          <Suspense fallback="..loading">
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          </Suspense>
-        }
-        // path="/template/1" => view template questions
-        // path="/question/1" => add new question in a template //nooooo
-        path=":type/:templateId"
-      />
+    />
 
-      {/* <Route
-        element={
-          <Suspense fallback="..loading">
-            <PrivateRoute>
-              <Home />
-            </PrivateRoute>
-          </Suspense>
-        }
-        // path="/question/1/1" => edit existing question in a template
-        path=":type/:templateId/:questionId"
-      /> */}
-    </Route>
+    {/* *********************************** view survey template screen [questions &  branching flow  tabs]  *******************************/}
+    <Route
+      element={
+        <Suspense fallback="..loading">
+          <PrivateRoute>
+            <SurveyTemplate />
+          </PrivateRoute>
+        </Suspense>
+      }
+      path="/template/:templateId"
+    />
 
+    {/* ********************************* Add/Edit questions **********************************/}
+    <Route
+      element={
+        <Suspense fallback="..loading">
+          <PrivateRoute>
+            <SurveyTemplate />
+          </PrivateRoute>
+        </Suspense>
+      }
+      path="/question/:templateId"
+    />
     {/*************************************  Preview template **********************************/}
 
     <Route

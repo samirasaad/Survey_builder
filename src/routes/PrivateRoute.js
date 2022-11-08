@@ -8,28 +8,37 @@ import { firebaseSignout } from "../firebase/authMethods";
 import Auth from "../utils/Auth";
 
 const PrivateRoute = ({ children }) => {
+  const templateId = localStorage.getItem("templateId");
   const handleLogout = () => {
     firebaseSignout();
     Auth.signOut();
   };
 
+  // not auth
   if (!Auth.isAuth()) {
     return <Navigate to="/login" replace />;
   } else {
-    return (
-      <>
-        {/* <Navigationbar /> */}
-        <Btn content="logout" handleClick={handleLogout} />
-        <div className="row">
-          <div className="col-3">
-            <SideMenu />
+    //auth
+    if (templateId && window.location.pathname === "/") {
+      return <Navigate to={`/template/${templateId}`} replace />;
+    } else if (!templateId && window.location.pathname.includes("/template/")) {
+      return <Navigate to="/" replace />;
+    } else {
+      return (
+        <>
+          {/* <Navigationbar /> */}
+          <Btn content="logout" handleClick={handleLogout} />
+          <div className="row">
+            <div className="col-3">
+              <SideMenu />
+            </div>
+            <div className="col-9">{children}</div>
           </div>
-        <div className="col-9">{children}</div>
-        </div>
 
-        {/* <Footer /> */}
-      </>
-    );
+          {/* <Footer /> */}
+        </>
+      );
+    }
   }
 };
 export default PrivateRoute;
