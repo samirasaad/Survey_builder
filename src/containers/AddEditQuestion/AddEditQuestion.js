@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import QuestionTypes from "../../components/questionTypes/questionTypes";
 import RadioQuestionTemplate from "../../components/RadioQuestionTemplate/RadioQuestionTemplate";
+import TextEditor from "../../sharedUi/TextEditor/TextEditor";
 
 const AddEditQuestion = () => {
   const [templateQuestionsList, setTemplateQuestionsList] = useState([]);
@@ -65,10 +66,12 @@ const AddEditQuestion = () => {
   };
 
   /***************************** handle question text change ****************************/
-  const handleQuestionChange = (e, questionIndex) => {
-    let tempQuestionsList = JSON.parse(JSON.stringify(templateQuestionsList));
-    tempQuestionsList[questionIndex].questionContent = e.target.value;
-    setTemplateQuestionsList([...tempQuestionsList]);
+  const handleQuestionChange = (e, editorHtmlVal) => {
+    console.log(e);
+    console.log(editorHtmlVal);
+    // let tempQuestionsList = JSON.parse(JSON.stringify(templateQuestionsList));
+    // tempQuestionsList[questionIndex].questionContent = e.target.value;
+    // setTemplateQuestionsList([...tempQuestionsList]);
   };
 
   /************** generate new id [ generatorType => question or answer ] ***************/
@@ -132,7 +135,7 @@ const AddEditQuestion = () => {
       </div>
 
       <div className="col-md-6">
-        <p>texteditor</p>
+        <TextEditor handleEditorChange={handleQuestionChange} />
       </div>
 
       <div className="col-md-3">

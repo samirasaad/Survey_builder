@@ -8,6 +8,7 @@
     "@loadable/component": "^5.15.2",
     "@mui/icons-material": "^5.10.9",
     "@mui/material": "^5.10.11",
+    "@tinymce/tinymce-react": "^4.2.0",
     "bootstrap": "^5.2.2",
     "firebase": "^9.13.0",
     "flowtype": "^2.0.0",
