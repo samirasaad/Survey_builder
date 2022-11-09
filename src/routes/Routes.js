@@ -22,9 +22,12 @@ const Signup = loadable(() => import("../containers/SignUp/SignUp"), {
   fallback: "..loading",
 });
 
-const NoSurveyTemplateFound = loadable(() => import("../containers/NoSurveyTemplateFound/NoSurveyTemplateFound"), {
-  fallback: "..loading",
-});
+const NoSurveyTemplateFound = loadable(
+  () => import("../containers/NoSurveyTemplateFound/NoSurveyTemplateFound"),
+  {
+    fallback: "..loading",
+  }
+);
 
 const AddEditQuestion = loadable(
   () => import("../containers/AddEditQuestion/AddEditQuestion"),
@@ -112,12 +115,23 @@ const AppRoutes = (
       element={
         <Suspense fallback="..loading">
           <PrivateRoute>
-            <SurveyTemplate />
+            <AddEditQuestion />
           </PrivateRoute>
         </Suspense>
       }
-      path="/question/:templateId"
-    />
+      path="/question"
+    >
+      <Route
+        element={
+          <Suspense fallback="..loading">
+            <PrivateRoute>
+              <AddEditQuestion />
+            </PrivateRoute>
+          </Suspense>
+        }
+        path=":templateId"
+      />
+    </Route>
     {/*************************************  Preview template **********************************/}
 
     <Route
@@ -141,19 +155,6 @@ const AppRoutes = (
         path=":templateId"
       />
     </Route>
-
-    {/************************************* Add/Edit question **********************************/}
-
-    {/* <Route
-      element={
-        <Suspense fallback="..loading">
-          <PrivateRoute>
-            <AddEditQuestion />
-          </PrivateRoute>
-        </Suspense>
-      }
-      path="preview/:templateId"
-    /> */}
 
     {/*************************************  Not found **********************************/}
 
