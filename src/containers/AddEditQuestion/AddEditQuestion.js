@@ -1,23 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import QuestionTypes from "../../components/questionTypes/questionTypes";
-import RadioQuestionTemplate from "../../components/RadioQuestionTemplate/RadioQuestionTemplate";
-import TextEditor from "../../sharedUi/TextEditor/TextEditor";
+import QuestionTemplate from "../../components/QuestionTemplate/QuestionTemplate";
 
 const AddEditQuestion = () => {
-  const [templateQuestionsList, setTemplateQuestionsList] = useState([]);
+  const { questionId } = useParams();
+  const [mode, setMode] = useState(questionId ? "edit" : "add");
+  const [questionObj, setQuestionObj] = useState(null);
+
+  useEffect(() => {
+    if (mode === "add") {
+      // add mode => default queston template is radio
+      setQuestionObj(generateNewQuestionObj("radio"));
+    } else if (mode === "edit") {
+      // get obj from firestore and generte question obj whit its type and fill all its value
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
 
   /****************************** handle answer text change *****************************/
-  const handleAnswerChange = (e, questionIndex, answerIndex, questionType) => {
+  const handleAnswerChange = (e, answerIndex, questionType) => {
     switch (questionType) {
       case "radio":
-      case "dropDown":
+      case "dropdown":
       case "multiSelect":
-        let tempQuestionsList = JSON.parse(
-          JSON.stringify(templateQuestionsList)
-        );
-        tempQuestionsList[questionIndex].answers[answerIndex].content =
-          e.target.value;
-        setTemplateQuestionsList([...tempQuestionsList]);
+        let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+        tempQuestionObj.answers[answerIndex].content = e.target.value;
+        setQuestionObj({ ...tempQuestionObj });
         break;
 
       default:
@@ -25,81 +34,15 @@ const AddEditQuestion = () => {
     }
   };
 
-  /********************************** delete answer **********************/
-  // only for drop down, radio, multi select questions
-  const handleDeleteAnswer = (e, questionIndex, answerIndex) => {
-    let tempQuestionsList = JSON.parse(JSON.stringify(templateQuestionsList));
-    tempQuestionsList[questionIndex].answers.splice(answerIndex, 1);
-    setTemplateQuestionsList([...tempQuestionsList]);
-  };
-
-  const getQuestionComponnet = (ques, questionIndex) => {
-    switch (ques.questionType) {
-      case "dropDown":
-        return <div key={`question-${questionIndex}`}>drop down</div>;
-      case "multiSelect":
-        return <div key={`question-${questionIndex}`}>multi</div>;
-      case "radio":
-        return (
-          <div key={`question-${questionIndex}`}>
-            <RadioQuestionTemplate
-              questionTemplate={ques}
-              questionIndex={questionIndex}
-              handleAnswerChange={handleAnswerChange}
-              handleAddNewAnswer={handleAddNewAnswer}
-              handleDeleteAnswer={handleDeleteAnswer}
-              handleQuestionChange={(e) =>
-                handleQuestionChange(e, questionIndex)
-              }
-            />
-          </div>
-        );
-
-      default:
-        return;
-    }
-  };
-
-  //   generate random number to generate id for both [question and answer]
-  const generateRandomNum = (num) => {
-    return `${Math.random().toFixed(num).split(".")[1]}`;
-  };
-
-  /***************************** handle question text change ****************************/
-  const handleQuestionChange = (e, editorHtmlVal) => {
-    console.log(e);
-    console.log(editorHtmlVal);
-    // let tempQuestionsList = JSON.parse(JSON.stringify(templateQuestionsList));
-    // tempQuestionsList[questionIndex].questionContent = e.target.value;
-    // setTemplateQuestionsList([...tempQuestionsList]);
-  };
-
-  /************** generate new id [ generatorType => question or answer ] ***************/
-  const generateNewID = (generatorType) => {
-    return `${generatorType}-${generateRandomNum(5)}-${generateRandomNum(
-      5
-    )}-${generateRandomNum(5)}`;
-  };
-
-  /************************************ add new answer *********************************/
-  // only for drop down, radio, multi select questions
-  const handleAddNewAnswer = (e, questionIndex) => {
-    let tempQuestionsList = JSON.parse(JSON.stringify(templateQuestionsList));
-    tempQuestionsList[questionIndex].answers.push({
-      content: "",
-      id: generateNewID("answer"),
-    });
-    setTemplateQuestionsList([...tempQuestionsList]);
-  };
-
-  /******************************* geerate new question object ****************************/
+  /******************************* generate new question object ****************************/
   const generateNewQuestionObj = (questionType) => {
     switch (questionType) {
-      case "dropDown":
+      case "dropdown":
       case "multiSelect":
       case "radio":
         return {
           questionContent: "",
+          isRequired: false,
           id: generateNewID("question"),
           questionType,
           answers: [
@@ -119,13 +62,71 @@ const AddEditQuestion = () => {
     }
   };
 
+  /********************************** delete answer **********************/
+  // only for drop down, radio, multi select questions
+  const handleDeleteAnswer = (e, answerIndex) => {
+    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    tempQuestionObj.answers.splice(answerIndex, 1);
+    setQuestionObj({ ...tempQuestionObj });
+  };
+
+  const getQuestionComponent = () => {
+    switch (questionObj?.questionType) {
+      case "dropdown":
+      case "multiSelect":
+      case "radio":
+        return (
+          <div key={`question-${questionObj?.id}`}>
+            <QuestionTemplate
+              questionObj={questionObj}
+              handleAnswerChange={handleAnswerChange}
+              handleAddNewAnswer={handleAddNewAnswer}
+              handleDeleteAnswer={handleDeleteAnswer}
+              handleQuestionChange={handleQuestionChange}
+            />
+          </div>
+        );
+
+      default:
+        return;
+    }
+  };
+
+  //   generate random number to generate id for both [question and answer]
+  const generateRandomNum = (num) => {
+    return `${Math.random().toFixed(num).split(".")[1]}`;
+  };
+
+  /***************************** handle question text change ****************************/
+  const handleQuestionChange = (e, editorHtmlVal) => {
+    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    tempQuestionObj.questionContent = editorHtmlVal;
+    setQuestionObj({ ...tempQuestionObj });
+  };
+
+  /************** generate new id [ generatorType => question or answer ] ***************/
+  const generateNewID = (generatorType) => {
+    return `${generatorType}-${generateRandomNum(5)}-${generateRandomNum(
+      5
+    )}-${generateRandomNum(5)}`;
+  };
+
+  /************************************ add new answer *********************************/
+  // only for drop down, radio, multi select questions
+  const handleAddNewAnswer = (e) => {
+    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    tempQuestionObj.answers.push({
+      content: "",
+      id: generateNewID("answer"),
+    });
+    setQuestionObj({ ...tempQuestionObj });
+  };
+
   /********************* adding new question to template questions list *****************/
   const addQuestion = (e, questionType) => {
-    let questionTemplate = generateNewQuestionObj(questionType);
-    // if its the first question to be added
+    setQuestionObj(generateNewQuestionObj(questionType));
+    // if its the first question to be added isStart
     // to know the survey start point
-    questionTemplate.isStart = templateQuestionsList.length === 0;
-    setTemplateQuestionsList([...templateQuestionsList, questionTemplate]);
   };
 
   return (
@@ -135,7 +136,7 @@ const AddEditQuestion = () => {
       </div>
 
       <div className="col-md-6">
-        <TextEditor handleEditorChange={handleQuestionChange} />
+        {getQuestionComponent(questionObj?.questionType)}
       </div>
 
       <div className="col-md-3">

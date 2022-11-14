@@ -7,7 +7,6 @@ import NoSurveyTemplateFound from "../../containers/NoSurveyTemplateFound/NoSurv
 const SideMenu = () => {
   const navigate = useNavigate();
   const templateId = localStorage.getItem("templateId");
-  console.log("templateId", templateId);
   const sideMenuOptions = [
     {
       id: 0,
@@ -42,7 +41,7 @@ const SideMenu = () => {
   };
 
   return sideMenuOptions.map((opt) => (
-    <div onClick={(e) => handelRouting(e, opt.redirectionUrl)}>{opt.title}</div>
+    <div key={opt.id} onClick={(e) => handelRouting(e, opt.redirectionUrl)}>{opt.title}</div>
   ));
 };
 

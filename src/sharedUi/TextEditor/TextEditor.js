@@ -3,6 +3,9 @@ import { Editor } from "@tinymce/tinymce-react";
 
 const TextEditor = ({ handleEditorChange }) => {
   const editorRef = useRef(null);
+  // const handleEditorChange = (s) => {
+  //   console.log(s);
+  // };
   return (
     <>
       <Editor

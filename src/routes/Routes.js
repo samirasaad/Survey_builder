@@ -119,7 +119,7 @@ const AppRoutes = (
           </PrivateRoute>
         </Suspense>
       }
-      path="/question"
+      path="/question/:templateId" //add new question
     >
       <Route
         element={
@@ -129,7 +129,7 @@ const AppRoutes = (
             </PrivateRoute>
           </Suspense>
         }
-        path=":templateId"
+        path=":questionId" //edit question
       />
     </Route>
     {/*************************************  Preview template **********************************/}

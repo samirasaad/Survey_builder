@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-import RadioQuestionTemplate from "../RadioQuestionTemplate/RadioQuestionTemplate";
+import React from "react";
 
-const QuestionTypes = ({addQuestion}) => {
-
+const QuestionTypes = ({ addQuestion }) => {
   const questionTypes = [
     {
       type: "dropdown",
@@ -16,13 +14,17 @@ const QuestionTypes = ({addQuestion}) => {
       type: "radio",
       id: 3,
     },
+    {
+      type: "rate",
+      id: 4,
+    },
   ];
 
   return (
     <>
-      {questionTypes.map((q) => (
-        <div key={q.id} onClick={(e) => addQuestion(e, "dropDown")}>
-          <p>{q.type}</p>
+      {questionTypes.map((t) => (
+        <div key={t.id} onClick={(e) => addQuestion(e, t.type)}>
+          <p>{t.type}</p>
         </div>
       ))}
     </>
