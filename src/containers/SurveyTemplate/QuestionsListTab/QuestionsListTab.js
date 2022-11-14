@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Modal from "../../../sharedUi/Modal/Modal";
+import Modal from "../../../components/sharedUi/Modal/Modal";
 import SingleQuestion from "./SingleQuestion";
 import Btn from "./../../../controls/Btn/Btn";
 

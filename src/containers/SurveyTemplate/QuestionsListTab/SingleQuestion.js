@@ -1,4 +1,4 @@
-import SharedTooltip from "../../../sharedUi/Tooltip/Tooltip";
+import SharedTooltip from "../../../components/sharedUi/Tooltip/Tooltip";
 import Button from "@mui/material/Button";
 import Btn from "../../../controls/Btn/Btn";
 
