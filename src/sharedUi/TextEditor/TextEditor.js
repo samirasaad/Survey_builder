@@ -8,7 +8,7 @@ const TextEditor = ({ handleEditorChange }) => {
       <Editor
         onInit={(evt, editor) => (editorRef.current = editor)}
         initialValue=""
-        value={}
+        // value={}
         init={{
           height: 200,
           resize: false,
