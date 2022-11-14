@@ -1,5 +1,5 @@
 import React from "react";
-import TextEditor from "../sharedUi/TextEditor/TextEditor";
+import TextEditor from "../../components/sharedUi/TextEditor/TextEditor";
 
 const RadioquestionObj = ({
   questionObj,

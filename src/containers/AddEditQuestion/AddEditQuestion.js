@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import QuestionTypes from "../../components/questionTypes/questionTypes";
-import QuestionTemplate from "../../components/QuestionTemplate/QuestionTemplate";
+import QuestionTemplate from "../../components/QuestionTemplates/QuestionTemplate";
+import RatingQuestionTemplate from "../../components/QuestionTemplates/RatingQuestionTemplate";
 
 const AddEditQuestion = () => {
   const { questionId } = useParams();
@@ -57,6 +58,16 @@ const AddEditQuestion = () => {
           ],
         };
 
+      case "rating":
+        return {
+          questionContent: "",
+          isRequired: false,
+          id: generateNewID("question"),
+          questionType,
+          ratingLimit: 3,
+          ratingIcon: "hearts", //hearts || stars
+        };
+
       default:
         return;
     }
@@ -86,6 +97,9 @@ const AddEditQuestion = () => {
             />
           </div>
         );
+
+      case "rating":
+        return <RatingQuestionTemplate questionObj={questionObj} />;
 
       default:
         return;
@@ -124,6 +138,7 @@ const AddEditQuestion = () => {
 
   /********************* adding new question to template questions list *****************/
   const addQuestion = (e, questionType) => {
+    console.log(questionType);
     setQuestionObj(generateNewQuestionObj(questionType));
     // if its the first question to be added isStart
     // to know the survey start point

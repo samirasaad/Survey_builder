@@ -15,7 +15,7 @@ const QuestionTypes = ({ addQuestion }) => {
       id: 3,
     },
     {
-      type: "rate",
+      type: "rating",
       id: 4,
     },
   ];
