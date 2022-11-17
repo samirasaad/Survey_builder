@@ -8,6 +8,7 @@ const AddEditQuestion = () => {
   const { questionId } = useParams();
   const [mode, setMode] = useState(questionId ? "edit" : "add");
   const [questionObj, setQuestionObj] = useState(null);
+  const [hasLabels, setHasLabels] = useState(false);
 
   useEffect(() => {
     if (mode === "add") {
@@ -35,6 +36,60 @@ const AddEditQuestion = () => {
     }
   };
 
+  /************************* handle is rating component has labels , getting labels *********************/
+  const handleIsRatingHasLabels = (val) => {
+    setHasLabels(val.target.checked);
+    getRatingLabels(questionObj?.ratingLimit);
+  };
+
+  /******************************* rating change ************************/
+  const handleRatingChange = (e, newVal) => {
+    setQuestionObj({ ...questionObj, rate: newVal });
+  };
+
+  const getRatingLabels = (ratingLimit) => {
+    switch (ratingLimit) {
+      case 3:
+        setQuestionObj({
+          ...questionObj,
+          labels: { 1: "Poor", 2: "Good", 3: "Excellent" },
+        });
+        break;
+      case 5:
+        setQuestionObj({
+          ...questionObj,
+          labels: {
+            1: "Useless",
+            2: "Poor",
+            3: "Ok",
+            4: "Good",
+            5: "Excellent",
+          },
+        });
+        break;
+
+      case 10:
+        setQuestionObj({
+          ...questionObj,
+          labels: {
+            1: "Useless",
+            2: "Useless+",
+            3: "Poor",
+            4: "Poor+",
+            5: "Ok",
+            6: "Ok+",
+            7: "Good",
+            8: "Good+",
+            9: "Excellent",
+            10: "Excellent+",
+          },
+        });
+        break;
+      default:
+        return;
+    }
+  };
+
   /******************************* generate new question object ****************************/
   const generateNewQuestionObj = (questionType) => {
     switch (questionType) {
@@ -57,17 +112,18 @@ const AddEditQuestion = () => {
             },
           ],
         };
-
       case "rating":
         return {
           questionContent: "",
           isRequired: false,
           id: generateNewID("question"),
           questionType,
-          ratingLimit: 3,
+          ratingLimit: 5,
+          rate: 0,
           ratingIcon: "hearts", //hearts || stars
+          hasLabels: hasLabels,
+          labels: {},
         };
-
       default:
         return;
     }
@@ -81,6 +137,7 @@ const AddEditQuestion = () => {
     setQuestionObj({ ...tempQuestionObj });
   };
 
+  /******************************* get question template  ***********************************/
   const getQuestionComponent = () => {
     switch (questionObj?.questionType) {
       case "dropdown":
@@ -97,16 +154,22 @@ const AddEditQuestion = () => {
             />
           </div>
         );
-
       case "rating":
-        return <RatingQuestionTemplate questionObj={questionObj} />;
+        return (
+          <RatingQuestionTemplate
+            questionObj={questionObj}
+            hasLabels={hasLabels}
+            handleIsRatingHasLabels={handleIsRatingHasLabels}
+            handleRatingChange={handleRatingChange}
+          />
+        );
 
       default:
         return;
     }
   };
 
-  //   generate random number to generate id for both [question and answer]
+  /**************  generate random number to generate id for both [question and answer] *********/
   const generateRandomNum = (num) => {
     return `${Math.random().toFixed(num).split(".")[1]}`;
   };
