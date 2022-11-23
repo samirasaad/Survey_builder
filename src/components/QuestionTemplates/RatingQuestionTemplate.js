@@ -7,6 +7,7 @@ const RatingQuestionTemplate = ({
   handleQuestionChange,
   handleRatingChange,
   handleIsRatingHasLabels,
+  handleRatingLabelChange,
   hasLabels,
 }) => {
   return (
@@ -33,7 +34,9 @@ const RatingQuestionTemplate = ({
           return (
             <input
               key={`label-${index}`}
-              placeholder={questionObj.labels[index + 1]}
+              placeholder={questionObj.labels[index + 1].placeholder}
+              defaultValue={questionObj.labels[index + 1].val}
+              onChange={(e)=>handleRatingLabelChange(e,index)}
             />
           );
         })}

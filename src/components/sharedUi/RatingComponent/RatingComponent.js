@@ -21,13 +21,7 @@ const RatingComponent = ({
     },
   });
 
-  const [hover, setHover] = useState(1);
-
-  function getLabelText(value) {
-    return `${value} Star${value !== 1 ? "s" : ""}, ${
-      questionObj?.labels[value]
-    }`;
-  }
+  const [hover, setHover] = useState(0);
 
   return (
     <Box
@@ -35,14 +29,14 @@ const RatingComponent = ({
         "& > legend": { mt: 2 },
       }}
     >
-      {hasLabels && (
+      {hasLabels && hover && (
         <p sx={{ ml: 2 }}>
-          {questionObj?.labels[hover !== -1 ? hover : questionObj?.rate]}
+          {questionObj?.labels[hover !== -1 ? hover : questionObj?.rate]?.val ||
+            ""}
         </p>
       )}
 
       <StyledRating
-        getLabelText={getLabelText}
         onChangeActive={(event, newHover) => {
           setHover(newHover);
         }}

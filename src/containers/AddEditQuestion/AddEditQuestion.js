@@ -52,18 +52,22 @@ const AddEditQuestion = () => {
       case 3:
         setQuestionObj({
           ...questionObj,
-          labels: { 1: "Poor", 2: "Good", 3: "Excellent" },
+          labels: {
+            1: { val: null, placeholder: "Poor" },
+            2: { val: null, placeholder: "Good" },
+            3: { val: null, placeholder: "Excellent" },
+          },
         });
         break;
       case 5:
         setQuestionObj({
           ...questionObj,
           labels: {
-            1: "Useless",
-            2: "Poor",
-            3: "Ok",
-            4: "Good",
-            5: "Excellent",
+            1: { val: null, placeholder: "Useless" },
+            2: { val: null, placeholder: "Poor" },
+            3: { val: null, placeholder: "Ok" },
+            4: { val: null, placeholder: "Good" },
+            5: { val: null, placeholder: "Excellent" },
           },
         });
         break;
@@ -72,16 +76,16 @@ const AddEditQuestion = () => {
         setQuestionObj({
           ...questionObj,
           labels: {
-            1: "Useless",
-            2: "Useless+",
-            3: "Poor",
-            4: "Poor+",
-            5: "Ok",
-            6: "Ok+",
-            7: "Good",
-            8: "Good+",
-            9: "Excellent",
-            10: "Excellent+",
+            1: { val: null, placeholder: "Useless" },
+            2: { val: null, placeholder: "Useless+" },
+            3: { val: null, placeholder: "Poor" },
+            4: { val: null, placeholder: "Poor+" },
+            5: { val: null, placeholder: "Ok" },
+            6: { val: null, placeholder: "Ok+" },
+            7: { val: null, placeholder: "Good" },
+            8: { val: null, placeholder: "Good+" },
+            9: { val: null, placeholder: "Excellent" },
+            10: { val: null, placeholder: "Excellent+" },
           },
         });
         break;
@@ -137,6 +141,13 @@ const AddEditQuestion = () => {
     setQuestionObj({ ...tempQuestionObj });
   };
 
+  /******************************************* handle labels change **************************/
+  const handleRatingLabelChange = (e, labelIndex) => {
+    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    tempQuestionObj.labels[labelIndex + 1].val = e.target.value;
+    setQuestionObj({ ...tempQuestionObj });
+  };
+
   /******************************* get question template  ***********************************/
   const getQuestionComponent = () => {
     switch (questionObj?.questionType) {
@@ -161,6 +172,7 @@ const AddEditQuestion = () => {
             hasLabels={hasLabels}
             handleIsRatingHasLabels={handleIsRatingHasLabels}
             handleRatingChange={handleRatingChange}
+            handleRatingLabelChange={handleRatingLabelChange}
           />
         );
 
