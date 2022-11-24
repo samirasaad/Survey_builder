@@ -3,10 +3,16 @@ import { useParams } from "react-router-dom";
 import QuestionTypes from "../../components/questionTypes/questionTypes";
 import QuestionTemplate from "../../components/QuestionTemplates/QuestionTemplate";
 import RatingQuestionTemplate from "../../components/QuestionTemplates/RatingQuestionTemplate";
+import PopoverComponent from "../../components/sharedUi/PopOver/PopOver";
+import LogicConditions from "../../components/LogicConditions/LogicConditions";
+import AdvancedOptions from "../../components/AdvancedOptions/AdvancedOptions";
 
 const AddEditQuestion = () => {
   const { questionId } = useParams();
   const [mode, setMode] = useState(questionId ? "edit" : "add");
+  const [popOverState, setPopOverState] = useState(false);
+  const [popOverType, setPopOverType] = useState(null);
+
   const [questionObj, setQuestionObj] = useState(null);
   const [hasLabels, setHasLabels] = useState(false);
 
@@ -149,7 +155,7 @@ const AddEditQuestion = () => {
   };
 
   /******************************* get question template  ***********************************/
-  const getQuestionComponent = () => {
+  const renderQuestion = () => {
     switch (questionObj?.questionType) {
       case "dropdown":
       case "multiSelect":
@@ -219,19 +225,56 @@ const AddEditQuestion = () => {
     // to know the survey start point
   };
 
+  const renderPopOverContent = () => {
+    switch (popOverType) {
+      case "advanced-options":
+        return <AdvancedOptions />;
+      case "logic":
+        return <LogicConditions questionObj={questionObj} />;
+      default:
+        return;
+    }
+  };
+
+  const handlePopOverModalState = (e, type) => {
+    setPopOverState(!popOverState);
+    setPopOverType(type);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("submit");
+  };
+
   return (
     <div className="row">
+      {/* Questions types */}
       <div className="col-md-3">
         <QuestionTypes addQuestion={addQuestion} />
       </div>
 
-      <div className="col-md-6">
-        {getQuestionComponent(questionObj?.questionType)}
-      </div>
-
+      {/* render question template [with or without data according to mode add || edit] */}
+      <form className="col-md-6" onSubmit={handleSubmit}>
+        {renderQuestion(questionObj?.questionType)}
+      </form>
+      {/* Actions [advanced options || logic] */}
       <div className="col-md-3">
-        <p>Popover</p>
+        <p
+          onClick={(e) => handlePopOverModalState(e, "advanced-options")}
+          // onClick={(e) => renderPopOverContent(e, "advanced-options")}
+        >
+          advanced
+        </p>
+        <p onClick={(e) => handlePopOverModalState(e, "logic")}>logic</p>
       </div>
+      {/* Popover */}
+      {popOverState && (
+        <PopoverComponent
+          isOpen={popOverState}
+          handlePopOverModalState={handlePopOverModalState}
+          renderPopOverContent={renderPopOverContent}
+        />
+      )}
     </div>
   );
 };
