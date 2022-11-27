@@ -3,7 +3,7 @@ import InputField from "../../controls/InputField/InputField";
 import Btn from "../../controls/Btn/Btn";
 import { signInFirestore, signUpFirestore } from "../../firebase/authMethods";
 import { useNavigate } from "react-router-dom";
-import { getOwnerSurveyTemplte } from "../../utils/shared";
+import { handleHomeRedirection } from "../../utils/shared";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Signup = () => {
         localStorage.setItem("uid", res.user.uid);
         localStorage.setItem("email", res.user.email);
         localStorage.setItem("isRegistered", "true");
-        getOwnerSurveyTemplte(res.user.uid);
+        handleHomeRedirection(res.user.uid);
 
         // setUser(res.user);
         // checkUserExistenece(res.user.providerData[0]);

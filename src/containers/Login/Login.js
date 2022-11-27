@@ -3,7 +3,7 @@ import InputField from "../../controls/InputField/InputField";
 import Btn from "../../controls/Btn/Btn";
 import { signInFirestore } from "../../firebase/authMethods";
 import { Link } from "react-router-dom";
-import { getOwnerSurveyTemplte } from "../../utils/shared";
+import { handleHomeRedirection } from "../../utils/shared";
 
 const Login = () => {
   const [userInfo, setUserInfo] = useState({ email: null, password: null });
@@ -27,7 +27,7 @@ const Login = () => {
             localStorage.setItem("uid", res.user.uid);
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
-            getOwnerSurveyTemplte(res.user.uid);
+            handleHomeRedirection(res.user.uid);
 
             // navigate("/");
 
@@ -51,7 +51,7 @@ const Login = () => {
             localStorage.setItem("uid", res.user.uid);
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
-            getOwnerSurveyTemplte(res.user.uid);
+            handleHomeRedirection(res.user.uid);
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);
@@ -71,7 +71,7 @@ const Login = () => {
             localStorage.setItem("uid", res.user.uid);
             localStorage.setItem("email", res.user.email);
             localStorage.setItem("isRegistered", "true");
-            getOwnerSurveyTemplte(res.user.uid);
+            handleHomeRedirection(res.user.uid);
             // setUser(res.user);
             // checkUserExistenece(res.user.providerData[0]);
             // setIsSnackbarOpen(false);

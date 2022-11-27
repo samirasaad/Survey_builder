@@ -1,7 +1,8 @@
-import firebase from "firebase/compat/app";
+import { initializeApp } from "firebase/app";
 import "firebase/compat/firestore";
-import "firebase/compat/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import "firebase/compat/storage";
+import { getFirestore } from "firebase/firestore";
 // import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfigObj = {
@@ -14,10 +15,11 @@ const firebaseConfigObj = {
   measurementId: "G-PQF3Y74TP2",
 };
 
-// firebase init
-const App = firebase.initializeApp(firebaseConfigObj);
-const DB = firebase.firestore();
-const auth = firebase.auth;
-const storage = firebase.storage();
+// Initialize Firebase
+const App = initializeApp(firebaseConfigObj);
+const DB = getFirestore(App);
+// Initialize Firebase Authentication and get a reference to the service
+const Auth = getAuth(App);
+//const storage = getStorage(app);
 // const analytics = getAnalytics(App);
-export { DB, auth, storage };
+export { DB, Auth };
