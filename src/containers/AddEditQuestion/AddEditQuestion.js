@@ -5,10 +5,22 @@ import QuestionTemplate from "../../components/QuestionTemplates/QuestionTemplat
 import RatingQuestionTemplate from "../../components/QuestionTemplates/RatingQuestionTemplate";
 import PopoverComponent from "../../components/sharedUi/PopOver/PopOver";
 import LogicConditions from "../../components/LogicConditions/LogicConditions";
-import AdvancedOptions from "../../components/AdvancedOptions/AdvancedOptions";
+import QuestionBasicInfoForm from "../../components/QuestionBasicInfoForm/QuestionBasicInfoForm";
+import { QUESTIONS, TEMPLATES } from "../../utils/constants";
+import { generateNewID } from "../../utils/shared";
+import {
+  getFirestore,
+  collection,
+  setDoc,
+  arrayUnion,
+  doc,
+  addDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { DB } from "../../firebase";
 
 const AddEditQuestion = () => {
-  const { questionId } = useParams();
+  const { questionId, templateId } = useParams();
   const [mode, setMode] = useState(questionId ? "edit" : "add");
   const [popOverState, setPopOverState] = useState(false);
   const [popOverType, setPopOverType] = useState(null);
@@ -121,6 +133,20 @@ const AddEditQuestion = () => {
               content: "No",
             },
           ],
+          logic: {
+            conditioningType: {
+              label: "Always", //default
+              value: "always",
+            },
+            conditions: [
+              {
+                condition: null,
+                action: null,
+                nextQuestion: null,
+                selectedAnswer: null,
+              },
+            ],
+          },
         };
       case "rating":
         return {
@@ -133,6 +159,29 @@ const AddEditQuestion = () => {
           ratingIcon: "hearts", //hearts || stars
           hasLabels: hasLabels,
           labels: {},
+          logic: {
+            conditioningType: {
+              label: "If",
+              value: "if",
+            },
+            conditions: [
+              {
+                condition: {
+                  label: "Equals to",
+                  value: "equalsTo",
+                },
+                action: {
+                  label: "Go to",
+                  value: "goTo",
+                },
+                nextQuestion: null,
+                selectedAnswer: {
+                  value: "",
+                  label: "",
+                },
+              },
+            ],
+          },
         };
       default:
         return;
@@ -187,23 +236,11 @@ const AddEditQuestion = () => {
     }
   };
 
-  /**************  generate random number to generate id for both [question and answer] *********/
-  const generateRandomNum = (num) => {
-    return `${Math.random().toFixed(num).split(".")[1]}`;
-  };
-
   /***************************** handle question text change ****************************/
   const handleQuestionChange = (e, editorHtmlVal) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
     tempQuestionObj.questionContent = editorHtmlVal;
     setQuestionObj({ ...tempQuestionObj });
-  };
-
-  /************** generate new id [ generatorType => question or answer ] ***************/
-  const generateNewID = (generatorType) => {
-    return `${generatorType}-${generateRandomNum(5)}-${generateRandomNum(
-      5
-    )}-${generateRandomNum(5)}`;
   };
 
   /************************************ add new answer *********************************/
@@ -219,31 +256,54 @@ const AddEditQuestion = () => {
 
   /********************* adding new question to template questions list *****************/
   const addQuestion = (e, questionType) => {
-    console.log(questionType);
     setQuestionObj(generateNewQuestionObj(questionType));
     // if its the first question to be added isStart
     // to know the survey start point
   };
 
-  const renderPopOverContent = () => {
-    switch (popOverType) {
-      case "advanced-options":
-        return <AdvancedOptions />;
-      case "logic":
-        return <LogicConditions questionObj={questionObj} />;
-      default:
-        return;
-    }
-  };
+  const renderPopOverContent = () => (
+    <LogicConditions
+      questionObj={questionObj}
+      setQuestionObj={setQuestionObj}
+    />
+  );
 
-  const handlePopOverModalState = (e, type) => {
+  const handlePopOverModalState = (e) => {
     setPopOverState(!popOverState);
-    setPopOverType(type);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e, submitFormType) => {
     e.preventDefault();
-    console.log("submit");
+
+    if (mode === "add") {
+      switch (submitFormType) {
+        case "logicForm":
+          break;
+        case "basicInfoForm":
+          const templateQuestionsRef = doc(
+            DB,
+            QUESTIONS,
+            `${localStorage.getItem("uid")}-${templateId}`
+          );
+
+          await updateDoc(templateQuestionsRef, {
+            //if doc not exist willl create it, but if exist will not change anything
+            questions: arrayUnion(questionObj),
+          })
+            .then((res) => console.log(res))
+            .catch(async (err) => {
+              await // most probably err thrown from doc not found => [first time to add questions, doc not found]
+              setDoc(templateQuestionsRef, {
+                //if doc not exist willl create it, but if exist will not change anything
+                questions: arrayUnion(questionObj),
+              });
+            });
+          break;
+        default:
+          return;
+      }
+    } else if (mode === "edit") {
+    }
   };
 
   return (
@@ -252,20 +312,16 @@ const AddEditQuestion = () => {
       <div className="col-md-3">
         <QuestionTypes addQuestion={addQuestion} />
       </div>
-
       {/* render question template [with or without data according to mode add || edit] */}
-      <form className="col-md-6" onSubmit={handleSubmit}>
-        {renderQuestion(questionObj?.questionType)}
-      </form>
-      {/* Actions [advanced options || logic] */}
+      <div className="col-md-6">
+        <QuestionBasicInfoForm
+          handleSubmit={handleSubmit}
+          renderQuestion={renderQuestion}
+          questionObj={questionObj}
+        />
+      </div>
       <div className="col-md-3">
-        <p
-          onClick={(e) => handlePopOverModalState(e, "advanced-options")}
-          // onClick={(e) => renderPopOverContent(e, "advanced-options")}
-        >
-          advanced
-        </p>
-        <p onClick={(e) => handlePopOverModalState(e, "logic")}>logic</p>
+        <p onClick={(e) => handlePopOverModalState(e)}>logic</p>
       </div>
       {/* Popover */}
       {popOverState && (

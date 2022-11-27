@@ -1,4 +1,5 @@
 const USERS = "Users";
 const TEMPLATES = "Templates";
 const SURVEY_TEMPLATE = "SurveyTemplate";
-export { USERS, TEMPLATES, SURVEY_TEMPLATE };
+const QUESTIONS = "Questions";
+export { USERS, TEMPLATES, SURVEY_TEMPLATE, QUESTIONS };

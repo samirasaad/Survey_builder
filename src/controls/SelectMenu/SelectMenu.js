@@ -1,23 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import Select from "react-select";
 
-// const options = [
-//   { value: "chocolate", label: "Chocolate" },
-//   { value: "strawberry", label: "Strawberry" },
-//   { value: "vanilla", label: "Vanilla" },
-// ];
-
-const SelectMenu = ({ options, selectedOption, hadnleOptionChange }) => {
-  //   const [selectedOption, setSelectedOption] = useState(null);
-
+const SelectMenu = ({ options, value, defaultValue, handleOptionChange }) => {
   return (
-    <div className="App">
-      <Select
-        defaultValue={selectedOption}
-        onChange={hadnleOptionChange}
-        options={options}
-      />
-    </div>
+    <Select
+      defaultValue={defaultValue}
+      value={value}
+      onChange={handleOptionChange}
+      options={options}
+    />
   );
 };
 export default SelectMenu;
