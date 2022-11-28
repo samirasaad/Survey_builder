@@ -21,7 +21,10 @@ const PrivateRoute = ({ children }) => {
     //auth
     if (templateId && window.location.pathname === "/") {
       return <Navigate to={`/template/${templateId}`} replace />;
-    } else if (!templateId && window.location.pathname.includes("/template/")) {
+    } else if (
+      (!templateId && window.location.pathname.includes("/template/")) ||
+      (!templateId && window.location.pathname.includes("/question/"))
+    ) {
       return <Navigate to="/" replace />;
     } else {
       return (
