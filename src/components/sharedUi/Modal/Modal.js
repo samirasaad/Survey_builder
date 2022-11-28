@@ -18,13 +18,17 @@ const style = {
   p: 4,
 };
 
-const SharedModal = ({ renderModalContent, isOpen=false, handleModalState }) => {
+const SharedModal = ({
+  renderModalContent,
+  isOpen = false,
+  handleModalState,
+}) => {
   return (
     <div>
       <Modal
         aria-describedby="modal-description"
         open={isOpen}
-        onClose={() => handleModalState(false)}
+        onClose={(e) => handleModalState(e, false)}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
