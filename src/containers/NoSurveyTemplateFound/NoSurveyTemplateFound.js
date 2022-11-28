@@ -29,17 +29,18 @@ const Home = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newTemplateID = generateNewID();
+    const newTemplateId = generateNewID();
     // creating new document for new template
     try {
-      await setDoc(doc(DB, TEMPLATES, newTemplateID), {
+      await setDoc(doc(DB, TEMPLATES, newTemplateId), {
+        id: newTemplateId,
         ownerId: localStorage.getItem("uid"),
         title: templateTitle,
       });
       handleModalState(e, false);
       setTemplateTitle("");
-      localStorage.setItem("templateId", newTemplateID);
-      navigate(`/template/${newTemplateID}`);
+      localStorage.setItem("templateId", newTemplateId);
+      navigate(`/template/${newTemplateId}`);
     } catch (errr) {
       console.log(errr);
     }
@@ -73,13 +74,13 @@ const Home = () => {
           <p className="" onClick={(e) => handleModalState(e, true)}>
             Start creating
           </p>
-          {
+          {isOpen && (
             <Modal
               isOpen={isOpen}
               renderModalContent={(e) => renderModalContent(e)}
               handleModalState={handleModalState}
             />
-          }
+          )}
         </>
       }
     </section>
