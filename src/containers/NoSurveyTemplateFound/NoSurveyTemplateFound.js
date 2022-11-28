@@ -48,18 +48,20 @@ const Home = () => {
   const renderModalContent = () => (
     <>
       <p>Start creating your survey template </p>
-      <InputField
-        id="template-title"
-        label="Enter Survey title"
-        type="text"
-        variant="outlined"
-        defaultValue={templateTitle}
-        handleChange={handleTitleChange}
-      />
-      <div>
-        <Btn content="Save" handleClick={handleSubmit} type="submit" />
-        <Btn content="Cancel" handleClick={handleCancel} />
-      </div>
+      <form onSubmit={handleSubmit}>
+        <InputField
+          id="template-title"
+          label="Enter Survey title"
+          type="text"
+          variant="outlined"
+          defaultValue={templateTitle}
+          handleChange={handleTitleChange}
+        />
+        <div>
+          <Btn content="Save" handleClick={handleSubmit} type="submit" />
+          <Btn content="Cancel" handleClick={handleCancel} />
+        </div>
+      </form>
     </>
   );
 
