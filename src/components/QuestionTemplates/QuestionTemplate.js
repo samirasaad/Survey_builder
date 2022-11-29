@@ -13,7 +13,7 @@ const RadioquestionObj = ({
       <TextEditor handleEditorChange={handleQuestionChange} />
       <br />
       <h2 onClick={(e) => handleAddNewAnswer(e)}>add answer</h2>
-      {questionObj?.answers.map((ans, answerIndex) => (
+      {questionObj?.basicInfo?.answers.map((ans, answerIndex) => (
         <div key={`question-${questionObj.id}-answer-${ans?.id}`}>
           <input
             defaultValue={ans?.content}
@@ -21,7 +21,7 @@ const RadioquestionObj = ({
             onChange={(e) => handleAnswerChange(e, answerIndex, "radio")}
           />
 
-          {questionObj?.answers.length > 1 && (
+          {questionObj?.basicInfo?.answers.length > 1 && (
             <span onClick={(e) => handleDeleteAnswer(e, answerIndex)}>
               delete
             </span>

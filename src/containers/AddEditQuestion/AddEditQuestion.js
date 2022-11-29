@@ -6,7 +6,7 @@ import RatingQuestionTemplate from "../../components/QuestionTemplates/RatingQue
 import PopoverComponent from "../../components/sharedUi/PopOver/PopOver";
 import LogicConditions from "../../components/LogicConditions/LogicConditions";
 import QuestionBasicInfoForm from "../../components/QuestionBasicInfoForm/QuestionBasicInfoForm";
-import { QUESTIONS, TEMPLATES } from "../../utils/constants";
+import { BASIC_INFO, LOGIC, TEMPLATES } from "../../utils/constants";
 import { generateNewID } from "../../utils/shared";
 import {
   getFirestore,
@@ -47,68 +47,59 @@ const AddEditQuestion = () => {
       case "dropdown":
       case "multiSelect":
         let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-        tempQuestionObj.answers[answerIndex].content = e.target.value;
+        tempQuestionObj.basicInfo.answers[answerIndex].content = e.target.value;
         setQuestionObj({ ...tempQuestionObj });
         break;
-
       default:
         return;
     }
   };
 
   /************************* handle is rating component has labels , getting labels *********************/
-  const handleIsRatingHasLabels = (val) => {
-    setHasLabels(val.target.checked);
-    getRatingLabels(questionObj?.ratingLimit);
+  const handleIsRatingHasLabels = (e) => {
+    // setHasLabels(e.target.checked);
+    // getRatingLabels();
+
+    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    tempQuestionObj.basicInfo.hasLabels = e.target.checked;
+    tempQuestionObj.basicInfo.labels = { ...getRatingLabels() };
+    setQuestionObj({ ...tempQuestionObj });
   };
 
   /******************************* rating change ************************/
-  const handleRatingChange = (e, newVal) => {
-    setQuestionObj({ ...questionObj, rate: newVal });
-  };
+  // const handleRatingChange = (e, newVal) => {
+  //   setQuestionObj({ ...questionObj, ...questionObj?.basicInfo, rate: newVal });
+  // };
 
-  const getRatingLabels = (ratingLimit) => {
-    switch (ratingLimit) {
+  const getRatingLabels = () => {
+    switch (questionObj?.basicInfo?.ratingLimit) {
       case 3:
-        setQuestionObj({
-          ...questionObj,
-          labels: {
-            1: { val: null, placeholder: "Poor" },
-            2: { val: null, placeholder: "Good" },
-            3: { val: null, placeholder: "Excellent" },
-          },
-        });
-        break;
+        return {
+          1: { val: null, placeholder: "Poor" },
+          2: { val: null, placeholder: "Good" },
+          3: { val: null, placeholder: "Excellent" },
+        };
       case 5:
-        setQuestionObj({
-          ...questionObj,
-          labels: {
-            1: { val: null, placeholder: "Useless" },
-            2: { val: null, placeholder: "Poor" },
-            3: { val: null, placeholder: "Ok" },
-            4: { val: null, placeholder: "Good" },
-            5: { val: null, placeholder: "Excellent" },
-          },
-        });
-        break;
-
+        return {
+          1: { val: null, placeholder: "Useless" },
+          2: { val: null, placeholder: "Poor" },
+          3: { val: null, placeholder: "Ok" },
+          4: { val: null, placeholder: "Good" },
+          5: { val: null, placeholder: "Excellent" },
+        };
       case 10:
-        setQuestionObj({
-          ...questionObj,
-          labels: {
-            1: { val: null, placeholder: "Useless" },
-            2: { val: null, placeholder: "Useless+" },
-            3: { val: null, placeholder: "Poor" },
-            4: { val: null, placeholder: "Poor+" },
-            5: { val: null, placeholder: "Ok" },
-            6: { val: null, placeholder: "Ok+" },
-            7: { val: null, placeholder: "Good" },
-            8: { val: null, placeholder: "Good+" },
-            9: { val: null, placeholder: "Excellent" },
-            10: { val: null, placeholder: "Excellent+" },
-          },
-        });
-        break;
+        return {
+          1: { val: null, placeholder: "Useless" },
+          2: { val: null, placeholder: "Useless+" },
+          3: { val: null, placeholder: "Poor" },
+          4: { val: null, placeholder: "Poor+" },
+          5: { val: null, placeholder: "Ok" },
+          6: { val: null, placeholder: "Ok+" },
+          7: { val: null, placeholder: "Good" },
+          8: { val: null, placeholder: "Good+" },
+          9: { val: null, placeholder: "Excellent" },
+          10: { val: null, placeholder: "Excellent+" },
+        };
       default:
         return;
     }
@@ -121,20 +112,22 @@ const AddEditQuestion = () => {
       case "multiSelect":
       case "radio":
         return {
-          questionContent: "",
-          isRequired: false,
           id: generateNewID("question"),
-          questionType,
-          answers: [
-            {
-              id: generateNewID("answer"),
-              content: "Yes",
-            },
-            {
-              id: generateNewID("answer"),
-              content: "No",
-            },
-          ],
+          basicInfo: {
+            questionContent: "",
+            isRequired: false,
+            questionType,
+            answers: [
+              {
+                id: generateNewID("answer"),
+                content: "Yes",
+              },
+              {
+                id: generateNewID("answer"),
+                content: "No",
+              },
+            ],
+          },
           logic: {
             conditioningType: {
               label: "Always", //default
@@ -152,15 +145,17 @@ const AddEditQuestion = () => {
         };
       case "rating":
         return {
-          questionContent: "",
-          isRequired: false,
           id: generateNewID("question"),
-          questionType,
-          ratingLimit: 5,
-          rate: 0,
-          ratingIcon: "hearts", //hearts || stars
-          hasLabels: hasLabels,
-          labels: {},
+          basicInfo: {
+            questionContent: "",
+            isRequired: false,
+            questionType,
+            ratingLimit: 3,
+            rate: 0,
+            ratingIcon: "hearts", //hearts || stars
+            hasLabels: hasLabels,
+            labels: {},
+          },
           logic: {
             conditioningType: {
               label: "If",
@@ -194,20 +189,20 @@ const AddEditQuestion = () => {
   // only for drop down, radio, multi select questions
   const handleDeleteAnswer = (e, answerIndex) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.answers.splice(answerIndex, 1);
+    tempQuestionObj.basicInfo.answers.splice(answerIndex, 1);
     setQuestionObj({ ...tempQuestionObj });
   };
 
   /******************************************* handle labels change **************************/
   const handleRatingLabelChange = (e, labelIndex) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.labels[labelIndex + 1].val = e.target.value;
+    tempQuestionObj.basicInfo.labels[labelIndex + 1].val = e.target.value;
     setQuestionObj({ ...tempQuestionObj });
   };
 
   /******************************* get question template  ***********************************/
   const renderQuestion = () => {
-    switch (questionObj?.questionType) {
+    switch (questionObj?.basicInfo?.questionType) {
       case "dropdown":
       case "multiSelect":
       case "radio":
@@ -228,7 +223,6 @@ const AddEditQuestion = () => {
             questionObj={questionObj}
             hasLabels={hasLabels}
             handleIsRatingHasLabels={handleIsRatingHasLabels}
-            handleRatingChange={handleRatingChange}
             handleRatingLabelChange={handleRatingLabelChange}
           />
         );
@@ -241,7 +235,7 @@ const AddEditQuestion = () => {
   /***************************** handle question text change ****************************/
   const handleQuestionChange = (e, editorHtmlVal) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.questionContent = editorHtmlVal;
+    tempQuestionObj.basicInfo.questionContent = editorHtmlVal;
     setQuestionObj({ ...tempQuestionObj });
   };
 
@@ -249,7 +243,7 @@ const AddEditQuestion = () => {
   // only for drop down, radio, multi select questions
   const handleAddNewAnswer = (e) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.answers.push({
+    tempQuestionObj.basicInfo.answers.push({
       content: "",
       id: generateNewID("answer"),
     });
@@ -276,45 +270,63 @@ const AddEditQuestion = () => {
 
   const handleSubmit = async (e, submitFormType) => {
     e.preventDefault();
-    // get doc ref
-    const templateQuestionsRef = doc(
-      DB,
-      QUESTIONS,
-      `${localStorage.getItem("uid")}-${templateId}`
-    );
-
     if (mode === "add") {
       switch (submitFormType) {
-        case "logicForm":
-          break;
+        // case "basicInfoForm":
+        //   // arrayUnion => adds new value [not existed before] only [if exist will not be added]
+        //   // updateDoc with arrayUnion will push questionObj to questions array
+        //   // setDoc => create doc if not existed, or overwrites existing doc
+        //   // setDoc with arrayUnion will overwrites the existing object
+        //   await updateDoc(templateQuestionsRef, {
+        //     ownerId: localStorage.getItem("uid"),
+        //     templateId,
+        //     // questions: arrayUnion(questionObj),
+        //   })
+        //     .then((res) => navigate(`/template/${templateId}`))
+        //     .catch(async (err) => {
+        //       console.log(err);
+        //       console.log("doc not found create it");
+        //       // if failed updating doc,most probably because of doc not found
+        //       // which means user has no template questions yet, so create it
+        //       await setDoc(templateQuestionsRef, {
+        //         ownerId: localStorage.getItem("uid"),
+        //         templateId,
+        //         questions: arrayUnion(questionObj),
+        //       })
+        //         .then((res) => navigate(`/template/${templateId}`))
+        //         .catch((err) => {
+        //           console.log(err);
+        //         });
+        //     });
+        //   break;
+
+        ////////////////////////
         case "basicInfoForm":
-          // arrayUnion => adds new value [not existed before] only [if exist will not be added]
-          // updateDoc with arrayUnion will push questionObj to questions array
-          // setDoc => create doc if not existed, or overwrites existing doc
-          // setDoc with arrayUnion will overwrites the existing object
-          await updateDoc(templateQuestionsRef, {
+          // get doc ref
+          let templateQuestionsRef = doc(
+            DB,
+            BASIC_INFO,
+            `${localStorage.getItem("uid")}-${templateId}-${questionObj?.id}`
+          );
+          // always setDoc
+          // if first time to add logic ||  overWriting the existing logic object
+          await setDoc(templateQuestionsRef, {
             ownerId: localStorage.getItem("uid"),
             templateId,
-            questions: arrayUnion(questionObj),
+            questionId: questionObj.id,
+            basicInfo: questionObj.basicInfo,
           })
-            .then((res) => navigate(`/template/${templateId}`))
-            .catch(async (err) => {
+            .then((res) => {
+              console.log("success");
+              navigate(`/template/${templateId}`);
+            })
+            .catch((err) => {
               console.log(err);
-              console.log("doc not found create it");
-              // if failed updating doc,most probably because of doc not found
-              // which means user has no template questions yet, so create it
-              await setDoc(templateQuestionsRef, {
-                ownerId: localStorage.getItem("uid"),
-                templateId,
-                questions: arrayUnion(questionObj),
-              })
-                .then((res) => navigate(`/template/${templateId}`))
-                .catch((err) => {
-                  console.log(err);
-                });
             });
-          ////////////////////////////////////////////////////////////////////////////
           break;
+
+        ///////////////////////////////////////////////////////////////
+
         default:
           return;
       }
