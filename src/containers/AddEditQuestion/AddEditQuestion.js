@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import QuestionTypes from "../../components/questionTypes/questionTypes";
 import QuestionTemplate from "../../components/QuestionTemplates/QuestionTemplate";
 import RatingQuestionTemplate from "../../components/QuestionTemplates/RatingQuestionTemplate";
@@ -18,8 +18,10 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { DB } from "../../firebase";
+import { async } from "@firebase/util";
 
 const AddEditQuestion = () => {
+  const navigate = useNavigate();
   const { questionId, templateId } = useParams();
   const [mode, setMode] = useState(questionId ? "edit" : "add");
   const [popOverState, setPopOverState] = useState(false);
@@ -274,30 +276,44 @@ const AddEditQuestion = () => {
 
   const handleSubmit = async (e, submitFormType) => {
     e.preventDefault();
+    // get doc ref
+    const templateQuestionsRef = doc(
+      DB,
+      QUESTIONS,
+      `${localStorage.getItem("uid")}-${templateId}`
+    );
 
     if (mode === "add") {
       switch (submitFormType) {
         case "logicForm":
           break;
         case "basicInfoForm":
-          const templateQuestionsRef = doc(
-            DB,
-            QUESTIONS,
-            `${localStorage.getItem("uid")}-${templateId}`
-          );
-
+          // arrayUnion => adds new value [not existed before] only [if exist will not be added]
+          // updateDoc with arrayUnion will push questionObj to questions array
+          // setDoc => create doc if not existed, or overwrites existing doc
+          // setDoc with arrayUnion will overwrites the existing object
           await updateDoc(templateQuestionsRef, {
-            //if doc not exist willl create it, but if exist will not change anything
+            ownerId: localStorage.getItem("uid"),
+            templateId,
             questions: arrayUnion(questionObj),
           })
-            .then((res) => console.log(res))
+            .then((res) => navigate(`/template/${templateId}`))
             .catch(async (err) => {
-              await // most probably err thrown from doc not found => [first time to add questions, doc not found]
-              setDoc(templateQuestionsRef, {
-                //if doc not exist willl create it, but if exist will not change anything
+              console.log(err);
+              console.log("doc not found create it");
+              // if failed updating doc,most probably because of doc not found
+              // which means user has no template questions yet, so create it
+              await setDoc(templateQuestionsRef, {
+                ownerId: localStorage.getItem("uid"),
+                templateId,
                 questions: arrayUnion(questionObj),
-              });
+              })
+                .then((res) => navigate(`/template/${templateId}`))
+                .catch((err) => {
+                  console.log(err);
+                });
             });
+          ////////////////////////////////////////////////////////////////////////////
           break;
         default:
           return;
