@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { doc, setDoc } from "firebase/firestore";
+import { DB } from "../../firebase";
 import Btn from "../../controls/Btn/Btn";
 import SelectMenu from "../../controls/SelectMenu/SelectMenu";
+import { LOGIC } from "../../utils/constants";
 
 const LogicConditions = ({ questionObj, setQuestionObj }) => {
+  const { templateId } = useParams();
   const conditioningTypesOptions = [
     {
       label: "If",
@@ -11,6 +15,36 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
     {
       label: "Always",
       value: "always",
+    },
+  ];
+
+  const appliedActionsOptions = [
+    {
+      label: "Skip",
+      value: "skip",
+    },
+    {
+      label: "Go to",
+      value: "goTo",
+    },
+    {
+      label: "End survey",
+      value: "endSurvey",
+    },
+  ];
+
+  const ratingvaluesOptions = [
+    {
+      value: "1",
+      label: "1",
+    },
+    {
+      value: "2",
+      label: "2",
+    },
+    {
+      value: "3",
+      label: "3",
     },
   ];
 
@@ -57,36 +91,6 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
         ];
     }
   };
-
-  const appliedActionsOptions = [
-    {
-      label: "Skip",
-      value: "skip",
-    },
-    {
-      label: "Go to",
-      value: "goTo",
-    },
-    {
-      label: "End survey",
-      value: "endSurvey",
-    },
-  ];
-
-  const ratingvaluesOptions = [
-    {
-      value: "1",
-      label: "1",
-    },
-    {
-      value: "2",
-      label: "2",
-    },
-    {
-      value: "3",
-      label: "3",
-    },
-  ];
 
   const addNewCondition = () => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
@@ -208,8 +212,26 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
     });
   };
 
-  const handleSubmit = () => {
-    console.log(questionObj);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // get doc ref
+    let templateQuestionsRef = doc(
+      DB,
+      LOGIC,
+      `${localStorage.getItem("uid")}-${templateId}-${questionObj?.id}`
+    );
+    // always setDoc
+    // if first time to add logic ||  overWriting the existing logic object
+    await setDoc(templateQuestionsRef, {
+      ownerId: localStorage.getItem("uid"),
+      templateId,
+      questionId: questionObj.id,
+      logic: questionObj.logic,
+    })
+      .then((res) => console.log("success"))
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleCancel = () => {
@@ -235,7 +257,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, "logicForm")}>
-      {/* Conditioning type [if|always] */}
+      {/* Conditioning type [if || always] */}
       <SelectMenu
         options={conditioningTypesOptions}
         defaultValue={questionObj?.logic?.conditioningType}
@@ -244,7 +266,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       />
       <div className="d-flex">
         <div>{renderConditions()}</div>
-        {questionObj?.logic.conditioningType === "if" && (
+        {questionObj?.logic.conditioningType.value === "if" && (
           <p onClick={addNewCondition}>add condition</p>
         )}
       </div>
