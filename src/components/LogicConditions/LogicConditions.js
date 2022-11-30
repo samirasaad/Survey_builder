@@ -226,7 +226,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       ownerId: localStorage.getItem("uid"),
       templateId,
       questionId: questionObj.id,
-      logic: questionObj.logic,
+      ...questionObj.logic,
     })
       .then((res) => console.log("success"))
       .catch((err) => {

@@ -114,7 +114,7 @@ const AddEditQuestion = () => {
         return {
           id: generateNewID("question"),
           basicInfo: {
-            questionContent: "",
+            title: "",
             isRequired: false,
             questionType,
             answers: [
@@ -147,7 +147,7 @@ const AddEditQuestion = () => {
         return {
           id: generateNewID("question"),
           basicInfo: {
-            questionContent: "",
+            title: "",
             isRequired: false,
             questionType,
             ratingLimit: 3,
@@ -235,7 +235,7 @@ const AddEditQuestion = () => {
   /***************************** handle question text change ****************************/
   const handleQuestionChange = (e, editorHtmlVal) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.basicInfo.questionContent = editorHtmlVal;
+    tempQuestionObj.basicInfo.title = editorHtmlVal;
     setQuestionObj({ ...tempQuestionObj });
   };
 
@@ -314,7 +314,8 @@ const AddEditQuestion = () => {
             ownerId: localStorage.getItem("uid"),
             templateId,
             questionId: questionObj.id,
-            basicInfo: questionObj.basicInfo,
+            // basicInfo: questionObj.basicInfo,
+            ...questionObj.basicInfo
           })
             .then((res) => {
               console.log("success");

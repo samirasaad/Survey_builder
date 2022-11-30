@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../../../components/sharedUi/Modal/Modal";
 import SingleQuestion from "./SingleQuestion";
 import Btn from "./../../../controls/Btn/Btn";
@@ -6,7 +6,7 @@ import Btn from "./../../../controls/Btn/Btn";
 const QuestionsListTab = ({ questionsList }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [viewType, setViewType] = useState("List"); // List || Grid
-  const [questionID, setQuestionID] = useState(null);
+  const [questionId, setQuestionId] = useState(null);
 
   useEffect(() => {
     if (viewType === "Grid") {
@@ -20,18 +20,19 @@ const QuestionsListTab = ({ questionsList }) => {
     }
   }, [viewType]);
 
-  const handleModalState = (e, modalState, questionID) => {
-    setQuestionID(questionID);
+  const handleModalState = (e, modalState, questionId) => {
+    console.log(questionId);
+    setQuestionId(questionId);
     setIsOpen(modalState);
   };
 
   const handleDeleteQuestion = () => {
-    console.log(questionID);
+    console.log(questionId);
   };
 
   const renderModalContent = () => (
     <>
-      <p>Are you sure you want to delete this question ? </p>
+      <p>Are you sure you want to delete this question ? {questionId} </p>
       <div className="d-flex">
         <Btn content="Yes" handleClick={handleDeleteQuestion} />
         <Btn
@@ -58,7 +59,7 @@ const QuestionsListTab = ({ questionsList }) => {
             <SingleQuestion
               className="single-question col-12"
               question={question}
-              key={question.id}
+              key={`question-${question.questionId}`}
               handleModalState={handleModalState}
             />
           ))}
