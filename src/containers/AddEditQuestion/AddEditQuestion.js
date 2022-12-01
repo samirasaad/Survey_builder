@@ -1,44 +1,64 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import QuestionTypes from "../../components/questionTypes/questionTypes";
 import QuestionTemplate from "../../components/QuestionTemplates/QuestionTemplate";
 import RatingQuestionTemplate from "../../components/QuestionTemplates/RatingQuestionTemplate";
 import PopoverComponent from "../../components/sharedUi/PopOver/PopOver";
 import LogicConditions from "../../components/LogicConditions/LogicConditions";
 import QuestionBasicInfoForm from "../../components/QuestionBasicInfoForm/QuestionBasicInfoForm";
-import { BASIC_INFO, LOGIC, TEMPLATES } from "../../utils/constants";
+import { BASIC_INFO } from "../../utils/constants";
 import { generateNewID } from "../../utils/shared";
-import {
-  getFirestore,
-  collection,
-  setDoc,
-  arrayUnion,
-  doc,
-  addDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { DB } from "../../firebase";
-import { async } from "@firebase/util";
 
 const AddEditQuestion = () => {
   const navigate = useNavigate();
   const { questionId, templateId } = useParams();
   const [mode, setMode] = useState(questionId ? "edit" : "add");
   const [popOverState, setPopOverState] = useState(false);
-  const [popOverType, setPopOverType] = useState(null);
-
   const [questionObj, setQuestionObj] = useState(null);
-  const [hasLabels, setHasLabels] = useState(false);
 
   useEffect(() => {
-    if (mode === "add") {
-      // add mode => default queston template is radio
-      setQuestionObj(generateNewQuestionObj("radio"));
-    } else if (mode === "edit") {
-      // get obj from firestore and generte question obj whit its type and fill all its value
+    if (questionId) {
+      setMode("edit");
     }
+  }, [questionId]);
+
+  useEffect(() => {
+    console.log(mode);
+    console.log(questionId);
+    let mounted = true;
+    if (mode === "add") {
+      // add mode => default question template is radio
+      setQuestionObj(generateNewQuestionObj("radio"));
+    } else if (mode === "edit" && questionId) {
+      // get obj from firestore and genert setQuestionObj(generateNewQuestionObj("radio"));e question obj whith its type and fill all its value
+      if (mounted) {
+        getQuestionInfoFirestore();
+      }
+    }
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  }, [mode, questionId]);
+
+  const getQuestionInfoFirestore = async () => {
+    const docRef = doc(
+      DB,
+      BASIC_INFO,
+      `${localStorage.getItem("uid")}-${templateId}-${questionId}`
+    );
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("question data:", docSnap.data());
+      setQuestionObj({ ...questionObj, basicInfo: docSnap.data() });
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
 
   /****************************** handle answer text change *****************************/
   const handleAnswerChange = (e, answerIndex, questionType) => {
@@ -57,9 +77,6 @@ const AddEditQuestion = () => {
 
   /************************* handle is rating component has labels , getting labels *********************/
   const handleIsRatingHasLabels = (e) => {
-    // setHasLabels(e.target.checked);
-    // getRatingLabels();
-
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
     tempQuestionObj.basicInfo.hasLabels = e.target.checked;
     tempQuestionObj.basicInfo.labels = { ...getRatingLabels() };
@@ -185,14 +202,6 @@ const AddEditQuestion = () => {
     }
   };
 
-  /********************************** delete answer **********************/
-  // only for drop down, radio, multi select questions
-  const handleDeleteAnswer = (e, answerIndex) => {
-    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.basicInfo.answers.splice(answerIndex, 1);
-    setQuestionObj({ ...tempQuestionObj });
-  };
-
   /******************************************* handle labels change **************************/
   const handleRatingLabelChange = (e, labelIndex) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
@@ -239,6 +248,14 @@ const AddEditQuestion = () => {
     setQuestionObj({ ...tempQuestionObj });
   };
 
+  /********************************** delete answer **********************/
+  // only for drop down, radio, multi select questions
+  const handleDeleteAnswer = (e, answerIndex) => {
+    let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    tempQuestionObj.basicInfo.answers.splice(answerIndex, 1);
+    setQuestionObj({ ...tempQuestionObj });
+  };
+
   /************************************ add new answer *********************************/
   // only for drop down, radio, multi select questions
   const handleAddNewAnswer = (e) => {
@@ -271,67 +288,49 @@ const AddEditQuestion = () => {
   const handleSubmit = async (e, submitFormType) => {
     e.preventDefault();
     if (mode === "add") {
-      switch (submitFormType) {
-        // case "basicInfoForm":
-        //   // arrayUnion => adds new value [not existed before] only [if exist will not be added]
-        //   // updateDoc with arrayUnion will push questionObj to questions array
-        //   // setDoc => create doc if not existed, or overwrites existing doc
-        //   // setDoc with arrayUnion will overwrites the existing object
-        //   await updateDoc(templateQuestionsRef, {
-        //     ownerId: localStorage.getItem("uid"),
-        //     templateId,
-        //     // questions: arrayUnion(questionObj),
-        //   })
-        //     .then((res) => navigate(`/template/${templateId}`))
-        //     .catch(async (err) => {
-        //       console.log(err);
-        //       console.log("doc not found create it");
-        //       // if failed updating doc,most probably because of doc not found
-        //       // which means user has no template questions yet, so create it
-        //       await setDoc(templateQuestionsRef, {
-        //         ownerId: localStorage.getItem("uid"),
-        //         templateId,
-        //         questions: arrayUnion(questionObj),
-        //       })
-        //         .then((res) => navigate(`/template/${templateId}`))
-        //         .catch((err) => {
-        //           console.log(err);
-        //         });
-        //     });
-        //   break;
-
-        ////////////////////////
-        case "basicInfoForm":
-          // get doc ref
-          let templateQuestionsRef = doc(
-            DB,
-            BASIC_INFO,
-            `${localStorage.getItem("uid")}-${templateId}-${questionObj?.id}`
-          );
-          // always setDoc
-          // if first time to add logic ||  overWriting the existing logic object
-          await setDoc(templateQuestionsRef, {
-            ownerId: localStorage.getItem("uid"),
-            templateId,
-            questionId: questionObj.id,
-            // basicInfo: questionObj.basicInfo,
-            ...questionObj.basicInfo
-          })
-            .then((res) => {
-              console.log("success");
-              navigate(`/template/${templateId}`);
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          break;
-
-        ///////////////////////////////////////////////////////////////
-
-        default:
-          return;
-      }
+      // get doc ref
+      let templateQuestionsRef = doc(
+        DB,
+        BASIC_INFO,
+        `${localStorage.getItem("uid")}-${templateId}-${questionObj?.id}`
+      );
+      // always setDoc
+      // if first time to add logic ||  overWriting the existing logic object
+      await setDoc(templateQuestionsRef, {
+        ownerId: localStorage.getItem("uid"),
+        templateId,
+        questionId: questionObj.id,
+        // basicInfo: questionObj.basicInfo,
+        ...questionObj.basicInfo,
+      })
+        .then((res) => {
+          console.log("success");
+          navigate(`/template/${templateId}`);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } else if (mode === "edit") {
+      // we can use setDoc here also, cause we will rewrite the whole basic info object in the doc
+      // get doc ref
+      let templateQuestionsRef = doc(
+        DB,
+        BASIC_INFO,
+        `${localStorage.getItem("uid")}-${templateId}-${questionId}`
+      );
+      await updateDoc(templateQuestionsRef, {
+        ownerId: localStorage.getItem("uid"),
+        templateId,
+        questionId: questionObj.id,
+        ...questionObj.basicInfo,
+      })
+        .then((res) => {
+          console.log("success");
+          navigate(`/template/${templateId}`);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -341,7 +340,7 @@ const AddEditQuestion = () => {
       <div className="col-md-3">
         <QuestionTypes addQuestion={addQuestion} />
       </div>
-      {/* render question template [with or without data according to mode add || edit] */}
+      {/* Render question template [with or without data according to mode add || edit] */}
       <div className="col-md-6">
         <QuestionBasicInfoForm
           handleSubmit={handleSubmit}
@@ -352,7 +351,7 @@ const AddEditQuestion = () => {
       <div className="col-md-3">
         <p onClick={(e) => handlePopOverModalState(e)}>logic</p>
       </div>
-      {/* Popover */}
+      {/* Logic popover */}
       {popOverState && (
         <PopoverComponent
           isOpen={popOverState}

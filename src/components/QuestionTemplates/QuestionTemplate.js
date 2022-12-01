@@ -10,7 +10,10 @@ const RadioquestionObj = ({
 }) => {
   return (
     <>
-      <TextEditor handleEditorChange={handleQuestionChange} />
+      <TextEditor
+        handleEditorChange={handleQuestionChange}
+        value={questionObj?.basicInfo?.title}
+      />
       <br />
       <h2 onClick={(e) => handleAddNewAnswer(e)}>add answer</h2>
       {questionObj?.basicInfo?.answers.map((ans, answerIndex) => (

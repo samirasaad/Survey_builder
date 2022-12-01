@@ -10,7 +10,10 @@ const RatingQuestionTemplate = ({
 }) => {
   return (
     <>
-      <TextEditor handleEditorChange={handleQuestionChange} />
+      <TextEditor
+        handleEditorChange={handleQuestionChange}
+        value={questionObj?.basicInfo?.title}
+      />
       <RatingComponent
         hasLabels={questionObj?.basicInfo?.labels}
         questionObj={questionObj}
@@ -28,7 +31,6 @@ const RatingQuestionTemplate = ({
       {questionObj?.basicInfo?.hasLabels &&
         [...new Array(questionObj?.basicInfo?.ratingLimit)].map(
           (elm, index) => {
-            console.log(elm);
             return (
               <input
                 key={`label-${index}`}

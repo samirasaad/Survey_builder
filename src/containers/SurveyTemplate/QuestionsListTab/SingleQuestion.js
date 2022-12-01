@@ -1,31 +1,26 @@
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import SharedTooltip from "../../../components/sharedUi/Tooltip/Tooltip";
 import Button from "@mui/material/Button";
 import Btn from "../../../controls/Btn/Btn";
-import { useEffect } from "react";
 
 const SingleQuestion = ({ question, handleModalState, className }) => {
-  useEffect(() => {
-    renderQuestionAsHtml(question.title);
-  }, [question]);
-
-  const renderQuestionAsHtml = (htmlVal) => {
-    const parentElm = document.querySelector("#question");
-    if (parentElm) {
-      parentElm.innerHTML = htmlVal;
-    }
-  };
+  const navigate = useNavigate();
+  const { templateId } = useParams();
 
   return (
     <div className={`d-flex ${className}`}>
-      <p id="question"></p>
+      <p id="question" dangerouslySetInnerHTML={{ __html: question.title }}></p>
       {question?.isRequired && <span className="text-danger">*</span>}
-      <p>{question?.questionType}</p>
+      <p>{question?.basicInfo?.questionType}</p>
       <SharedTooltip
         tooltipTargetElement={
           <Button
-            onClick={(e) => handleModalState(e, true, question.questionId)}
+            onClick={() =>
+              navigate(`/question/${templateId}/${question?.questionId}`)
+            }
           >
-            Arrow
+            Edit
           </Button>
         }
         title="Edit question"
