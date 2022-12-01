@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { doc, setDoc } from "firebase/firestore";
 import { DB } from "../../firebase";
 import Btn from "../../controls/Btn/Btn";
@@ -6,6 +6,7 @@ import SelectMenu from "../../controls/SelectMenu/SelectMenu";
 import { LOGIC } from "../../utils/constants";
 
 const LogicConditions = ({ questionObj, setQuestionObj }) => {
+  const navigate = useNavigate();
   const { templateId } = useParams();
   const conditioningTypesOptions = [
     {
@@ -17,7 +18,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       value: "always",
     },
   ];
-
+  console.log(questionObj);
   const appliedActionsOptions = [
     {
       label: "Skip",
@@ -49,7 +50,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
   ];
 
   const getEquailtyOptions = () => {
-    switch (questionObj.questionType) {
+    switch (questionObj?.questionType) {
       case "rating":
         return [
           {
@@ -153,10 +154,10 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
   };
 
   const renderConditions = () => {
-    return questionObj?.logic.conditions.map((cond, index) => {
+    return questionObj?.logic?.conditions.map((cond, index) => {
       return (
         <div key={`logic-condition-${index}`}>
-          {questionObj.logic.conditioningType.value === "if" && (
+          {questionObj?.logic?.conditioningType.value === "if" && (
             <div>
               <p> Response is</p>
               {/* Condition itself => equality condition */}
@@ -204,7 +205,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
               }
             />
           )}
-          {questionObj?.logic.conditions.length > 1 && (
+          {questionObj?.logic?.conditions.length > 1 && (
             <p onClick={(e) => deleteCondition(e, index)}>delte condition</p>
           )}
         </div>
@@ -225,8 +226,8 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
     await setDoc(templateQuestionsRef, {
       ownerId: localStorage.getItem("uid"),
       templateId,
-      questionId: questionObj.id,
-      ...questionObj.logic,
+      questionId: questionObj?.id,
+      ...questionObj?.logic,
     })
       .then((res) => console.log("success"))
       .catch((err) => {
@@ -234,8 +235,10 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       });
   };
 
-  const handleCancel = () => {
-    console.log(questionObj);
+  // cancel editing in edit || add question [for both form [basic info | logic info]]
+  const handleCancelEditingQuestion = () => {
+    console.log("cancel");
+    navigate(`/template/${templateId}`);
   };
 
   const handleRemoveAll = () => {
@@ -264,15 +267,17 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
         value={questionObj?.logic?.conditioningType}
         handleOptionChange={(e) => handleOptionChange(e, "conditioningType")}
       />
+      {/* Render logic conditions */}
       <div className="d-flex">
-        <div>{renderConditions()}</div>
-        {questionObj?.logic.conditioningType.value === "if" && (
+        {questionObj?.logic && <div>{renderConditions()}</div>}
+        {questionObj?.logic?.conditioningType?.value === "if" && (
           <p onClick={addNewCondition}>add condition</p>
         )}
       </div>
+      {/* Actions */}
       <div className="logic-actions-btns">
         <Btn content="Save" handleClick={handleSubmit} type="submit" />
-        <Btn content="Cancel" handleClick={handleCancel} />
+        <Btn content="Cancel" handleClick={handleCancelEditingQuestion} />
         <Btn content="Remove all" handleClick={handleRemoveAll} />
       </div>
     </form>

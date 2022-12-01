@@ -25,8 +25,6 @@ const AddEditQuestion = () => {
   }, [questionId]);
 
   useEffect(() => {
-    console.log(mode);
-    console.log(questionId);
     let mounted = true;
     if (mode === "add") {
       // add mode => default question template is radio
@@ -34,7 +32,7 @@ const AddEditQuestion = () => {
     } else if (mode === "edit" && questionId) {
       // get obj from firestore and genert setQuestionObj(generateNewQuestionObj("radio"));e question obj whith its type and fill all its value
       if (mounted) {
-        getQuestionInfoFirestore();
+        getQuestionObjFirestore();
       }
     }
     return () => {
@@ -43,7 +41,7 @@ const AddEditQuestion = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, questionId]);
 
-  const getQuestionInfoFirestore = async () => {
+  const getQuestionObjFirestore = async () => {
     const docRef = doc(
       DB,
       BASIC_INFO,
@@ -170,7 +168,7 @@ const AddEditQuestion = () => {
             ratingLimit: 3,
             rate: 0,
             ratingIcon: "hearts", //hearts || stars
-            hasLabels: hasLabels,
+            hasLabels: false,
             labels: {},
           },
           logic: {
@@ -230,9 +228,9 @@ const AddEditQuestion = () => {
         return (
           <RatingQuestionTemplate
             questionObj={questionObj}
-            hasLabels={hasLabels}
             handleIsRatingHasLabels={handleIsRatingHasLabels}
             handleRatingLabelChange={handleRatingLabelChange}
+            handleQuestionChange={handleQuestionChange}
           />
         );
 
@@ -285,7 +283,14 @@ const AddEditQuestion = () => {
     setPopOverState(!popOverState);
   };
 
-  const handleSubmit = async (e, submitFormType) => {
+  // cancel editing in edit || add question [for both form [basic info | logic info]]
+  const handleCancelEditingQuestion = () => {
+    console.log("cancel");
+    navigate(`/template/${templateId}`);
+  };
+
+  const handleSubmit = async (e) => {
+    console.log("hereeeeeeeeeee");
     e.preventDefault();
     if (mode === "add") {
       // get doc ref
@@ -300,7 +305,6 @@ const AddEditQuestion = () => {
         ownerId: localStorage.getItem("uid"),
         templateId,
         questionId: questionObj.id,
-        // basicInfo: questionObj.basicInfo,
         ...questionObj.basicInfo,
       })
         .then((res) => {
@@ -345,7 +349,7 @@ const AddEditQuestion = () => {
         <QuestionBasicInfoForm
           handleSubmit={handleSubmit}
           renderQuestion={renderQuestion}
-          questionObj={questionObj}
+          handleCancelEditingQuestion={handleCancelEditingQuestion}
         />
       </div>
       <div className="col-md-3">

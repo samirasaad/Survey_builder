@@ -2,16 +2,14 @@ import Btn from "../../controls/Btn/Btn";
 
 const QuestionBasicInfoForm = ({
   handleSubmit,
-  questionObj,
   renderQuestion,
+  handleCancelEditingQuestion,
 }) => {
   return (
-    <form onSubmit={(e) => handleSubmit(e, "basicInfoForm")}>
-      {renderQuestion(questionObj?.questionType)}
-      <Btn
-        content="Save"
-        handleClick={(e) => handleSubmit(e, "basicInfoForm")}
-      />
+    <form onSubmit={handleSubmit}>
+      {renderQuestion()}
+      <Btn content="Save" handleClick={handleSubmit} type="submit" />
+      <Btn content="Cancel" handleClick={handleCancelEditingQuestion} />
     </form>
   );
 };

@@ -1,4 +1,3 @@
-import React from "react";
 import TextEditor from "../../components/sharedUi/TextEditor/TextEditor";
 import RatingComponent from "../../components/sharedUi/RatingComponent/RatingComponent";
 
@@ -12,7 +11,7 @@ const RatingQuestionTemplate = ({
     <>
       <TextEditor
         handleEditorChange={handleQuestionChange}
-        value={questionObj?.basicInfo?.title}
+        initialValue={questionObj?.basicInfo?.title}
       />
       <RatingComponent
         hasLabels={questionObj?.basicInfo?.labels}

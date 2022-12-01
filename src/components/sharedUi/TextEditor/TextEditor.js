@@ -1,14 +1,13 @@
 import React, { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 
-const TextEditor = ({ handleEditorChange, value }) => {
+const TextEditor = ({ handleEditorChange, initialValue }) => {
   const editorRef = useRef(null);
   return (
     <>
       <Editor
         onInit={(evt, editor) => (editorRef.current = editor)}
-        initialValue={value}
-        value={value}
+        initialValue={initialValue}
         init={{
           height: 200,
           resize: false,

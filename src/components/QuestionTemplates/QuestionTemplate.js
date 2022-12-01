@@ -12,7 +12,7 @@ const RadioquestionObj = ({
     <>
       <TextEditor
         handleEditorChange={handleQuestionChange}
-        value={questionObj?.basicInfo?.title}
+        initialValue={questionObj?.basicInfo?.title}
       />
       <br />
       <h2 onClick={(e) => handleAddNewAnswer(e)}>add answer</h2>
