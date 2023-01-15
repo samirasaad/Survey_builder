@@ -1,13 +1,49 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
 import { DB } from "../../firebase";
 import Btn from "../../controls/Btn/Btn";
 import SelectMenu from "../../controls/SelectMenu/SelectMenu";
-import { LOGIC } from "../../utils/constants";
+import PopoverComponent from "../../components/sharedUi/PopOver/PopOver";
+import { useEffect, useState } from "react";
+import { setDoc, doc, getDoc, updateDoc, collection } from "firebase/firestore";
 
-const LogicConditions = ({ questionObj, setQuestionObj }) => {
+import { BASIC_INFO, LOGIC } from "./../../utils/constants";
+
+const QuestionLogicForm = () => {
   const navigate = useNavigate();
-  const { templateId } = useParams();
+  const [popOverState, setPopOverState] = useState(false);
+  const { questionId, templateId } = useParams();
+  const [questionObj, setQuestionObj] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+    if (mounted) {
+      getQuestionLogic();
+    }
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // getting question logic
+  const getQuestionLogic = async () => {
+    const docRef = doc(
+      DB,
+      LOGIC,
+      `${localStorage.getItem("uid")}-${templateId}-${questionId}`
+    );
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("question data:", docSnap.data());
+      setQuestionObj(docSnap.data());
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
+
+  // condition type
   const conditioningTypesOptions = [
     {
       label: "If",
@@ -18,7 +54,8 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       value: "always",
     },
   ];
-  console.log(questionObj);
+
+  // action
   const appliedActionsOptions = [
     {
       label: "Skip",
@@ -49,6 +86,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
     },
   ];
 
+  // condition statment
   const getEquailtyOptions = () => {
     switch (questionObj?.questionType) {
       case "rating":
@@ -95,8 +133,8 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
 
   const addNewCondition = () => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.logic.conditions = [
-      ...tempQuestionObj.logic.conditions,
+    tempQuestionObj.conditions = [
+      ...tempQuestionObj.conditions,
       {
         condition: getEquailtyOptions()[0],
         action: {
@@ -115,7 +153,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
 
   const deleteCondition = (e, condIndex) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.logic.conditions.splice(condIndex, 1);
+    tempQuestionObj.conditions.splice(condIndex, 1);
     setQuestionObj({ ...tempQuestionObj });
   };
 
@@ -123,29 +161,29 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
     switch (optionType) {
       case "conditioningType":
-        tempQuestionObj.logic.conditioningType = val;
-        tempQuestionObj.logic.conditions[condIndex].condition = null;
-        tempQuestionObj.logic.conditions[condIndex].selectedAnswer = null;
-        tempQuestionObj.logic.conditions[condIndex].action = null;
-        tempQuestionObj.logic.conditions[condIndex].nextQuestion = null;
+        tempQuestionObj.conditioningType = val;
+        tempQuestionObj.conditions[condIndex].condition = null;
+        tempQuestionObj.conditions[condIndex].selectedAnswer = null;
+        tempQuestionObj.conditions[condIndex].action = null;
+        tempQuestionObj.conditions[condIndex].nextQuestion = null;
         break;
       case "condition":
-        tempQuestionObj.logic.conditions[condIndex].condition = val;
-        tempQuestionObj.logic.conditions[condIndex].selectedAnswer = val;
-        tempQuestionObj.logic.conditions[condIndex].action = val;
-        tempQuestionObj.logic.conditions[condIndex].nextQuestion = val;
+        tempQuestionObj.conditions[condIndex].condition = val;
+        tempQuestionObj.conditions[condIndex].selectedAnswer = val;
+        tempQuestionObj.conditions[condIndex].action = val;
+        tempQuestionObj.conditions[condIndex].nextQuestion = val;
         break;
       case "selectedAnswer":
-        tempQuestionObj.logic.conditions[condIndex].selectedAnswer = val;
-        tempQuestionObj.logic.conditions[condIndex].action = val;
-        tempQuestionObj.logic.conditions[condIndex].nextQuestion = val;
+        tempQuestionObj.conditions[condIndex].selectedAnswer = val;
+        tempQuestionObj.conditions[condIndex].action = val;
+        tempQuestionObj.conditions[condIndex].nextQuestion = val;
         break;
       case "action":
-        tempQuestionObj.logic.conditions[condIndex].action = val;
-        tempQuestionObj.logic.conditions[condIndex].nextQuestion = null;
+        tempQuestionObj.conditions[condIndex].action = val;
+        tempQuestionObj.conditions[condIndex].nextQuestion = null;
         break;
       case "question":
-        tempQuestionObj.logic.conditions[condIndex].nextQuestion = val;
+        tempQuestionObj.conditions[condIndex].nextQuestion = val;
         break;
       default:
         return;
@@ -154,10 +192,10 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
   };
 
   const renderConditions = () => {
-    return questionObj?.logic?.conditions.map((cond, index) => {
+    return questionObj?.conditions.map((cond, index) => {
       return (
         <div key={`logic-condition-${index}`}>
-          {questionObj?.logic?.conditioningType.value === "if" && (
+          {questionObj?.conditioningType?.value === "if" && (
             <div>
               <p> Response is</p>
               {/* Condition itself => equality condition */}
@@ -205,7 +243,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
               }
             />
           )}
-          {questionObj?.logic?.conditions.length > 1 && (
+          {questionObj?.conditions.length > 1 && (
             <p onClick={(e) => deleteCondition(e, index)}>delte condition</p>
           )}
         </div>
@@ -227,7 +265,7 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       ownerId: localStorage.getItem("uid"),
       templateId,
       questionId: questionObj?.id,
-      ...questionObj?.logic,
+      ...questionObj,
     })
       .then((res) => console.log("success"))
       .catch((err) => {
@@ -243,11 +281,8 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
 
   const handleRemoveAll = () => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.logic.conditioningType = {
-      label: "Always", //default
-      value: "always",
-    };
-    tempQuestionObj.logic.conditions = [
+    tempQuestionObj.conditioningType = null;
+    tempQuestionObj.conditions = [
       {
         condition: null,
         action: null,
@@ -258,19 +293,23 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
     setQuestionObj({ ...tempQuestionObj });
   };
 
-  return (
+  const handlePopOverModalState = (e) => {
+    setPopOverState(!popOverState);
+  };
+
+  const renderPopOverContent = () => (
     <form onSubmit={(e) => handleSubmit(e, "logicForm")}>
       {/* Conditioning type [if || always] */}
       <SelectMenu
         options={conditioningTypesOptions}
-        defaultValue={questionObj?.logic?.conditioningType}
-        value={questionObj?.logic?.conditioningType}
+        defaultValue={questionObj?.conditioningType}
+        value={questionObj?.conditioningType}
         handleOptionChange={(e) => handleOptionChange(e, "conditioningType")}
       />
       {/* Render logic conditions */}
       <div className="d-flex">
-        {questionObj?.logic && <div>{renderConditions()}</div>}
-        {questionObj?.logic?.conditioningType?.value === "if" && (
+        {questionObj && <div>{renderConditions()}</div>}
+        {questionObj?.conditioningType?.value === "if" && (
           <p onClick={addNewCondition}>add condition</p>
         )}
       </div>
@@ -282,6 +321,22 @@ const LogicConditions = ({ questionObj, setQuestionObj }) => {
       </div>
     </form>
   );
+
+  return (
+    <>
+      <div className="col-md-3">
+        <p onClick={(e) => handlePopOverModalState(e)}>logic</p>
+      </div>
+      {/* Logic popover */}
+      {popOverState && (
+        <PopoverComponent
+          isOpen={popOverState}
+          handlePopOverModalState={handlePopOverModalState}
+          renderPopOverContent={renderPopOverContent}
+        />
+      )}
+    </>
+  );
 };
 
-export default LogicConditions;
+export default QuestionLogicForm;

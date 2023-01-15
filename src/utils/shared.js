@@ -65,4 +65,140 @@ const generateRandomNum = (num) => {
   return `${Math.random().toFixed(num).split(".")[1]}`;
 };
 
-export { handleHomeRedirection, generateNewID };
+/******************************* generate new question basic info object ****************************/
+const generateNewQuestionObj = (questionType) => {
+  switch (questionType) {
+    case "dropdown":
+    case "multiSelect":
+    case "radio":
+      return {
+        id: generateNewID("question"),
+        // basicInfo: {
+        title: "",
+        isRequired: false,
+        questionType,
+        answers: [
+          {
+            id: generateNewID("answer"),
+            content: "Yes",
+          },
+          {
+            id: generateNewID("answer"),
+            content: "No",
+          },
+        ],
+        // },
+        // logic: {
+        //   conditioningType: {
+        //     label: "Always", //default
+        //     value: "always",
+        //   },
+        //   conditions: [
+        //     {
+        //       condition: null,
+        //       action: null,
+        //       nextQuestion: null,
+        //       selectedAnswer: null,
+        //     },
+        //   ],
+        // },
+      };
+    case "rating":
+      return {
+        id: generateNewID("question"),
+        // basicInfo: {
+        title: "",
+        isRequired: false,
+        questionType,
+        ratingLimit: 3,
+        rate: 0,
+        ratingIcon: "hearts", //hearts || stars
+        hasLabels: false,
+        labels: {},
+        // },
+        // logic: {
+        //   conditioningType: {
+        //     label: "If",
+        //     value: "if",
+        //   },
+        //   conditions: [
+        //     {
+        //       condition: {
+        //         label: "Equals to",
+        //         value: "equalsTo",
+        //       },
+        //       action: {
+        //         label: "Go to",
+        //         value: "goTo",
+        //       },
+        //       nextQuestion: null,
+        //       selectedAnswer: {
+        //         value: "",
+        //         label: "",
+        //       },
+        //     },
+        //   ],
+        // },
+      };
+    default:
+      return;
+  }
+};
+
+/****************************** generate new question logic object ***********************/
+const generateNewQuestionLogicObj = (questionType, questionId, firstAnswer) => {
+  switch (questionType) {
+    case "dropdown":
+    case "multiSelect":
+    case "radio":
+      return {
+        questionId,
+        conditioningType: {
+          label: "Always", //default
+          value: "always",
+        },
+        conditions: [
+          {
+            condition: null,
+            action: {
+              label: "End survey",
+              value: "endSurvey",
+            },
+            nextQuestion: null,
+            selectedAnswer: null,
+          },
+        ],
+      };
+    case "rating":
+      return {
+        questionId,
+        conditioningType: {
+          label: "If",
+          value: "if",
+        },
+        conditions: [
+          {
+            condition: {
+              label: "Equals to", //default
+              value: "equalsTo",
+            },
+            action: {
+              label: "End survey",
+              value: "endSurvey",
+            },
+            nextQuestion: null,
+            selectedAnswer: firstAnswer,
+          },
+        ],
+      };
+    default:
+      return;
+  }
+};
+
+export {
+  handleHomeRedirection,
+  generateNewID,
+  generateNewQuestionObj,
+  generateNewQuestionLogicObj,
+};
