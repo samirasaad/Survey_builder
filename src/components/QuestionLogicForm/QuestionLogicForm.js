@@ -4,7 +4,14 @@ import Btn from "../../controls/Btn/Btn";
 import SelectMenu from "../../controls/SelectMenu/SelectMenu";
 import PopoverComponent from "../../components/sharedUi/PopOver/PopOver";
 import { useEffect, useState } from "react";
-import { setDoc, doc, getDoc, updateDoc, collection } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  getDocs,
+} from "firebase/firestore";
 
 import { BASIC_INFO, LOGIC } from "./../../utils/constants";
 
@@ -13,17 +20,87 @@ const QuestionLogicForm = () => {
   const [popOverState, setPopOverState] = useState(false);
   const { questionId, templateId } = useParams();
   const [questionObj, setQuestionObj] = useState(null);
+  const [questionBasicInfoObj, setQuestionBasicInfoObj] = useState(null);
+  const [answersOptions, setAnswersOptions] = useState(null);
+  const [questionsList, setQuestionsList] = useState(null);
 
   useEffect(() => {
     let mounted = true;
     if (mounted) {
       getQuestionLogic();
+      getQuestionBasicInfo();
     }
     return () => {
       mounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [templateId, questionId, popOverState]);
+
+  useEffect(() => {
+    if (questionBasicInfoObj) {
+      /************************** to list all possible next questions *******************/
+      getQuestionsList();
+      /******************  and question answers to make question logic conditions ********/
+      // if question has answers => radio, multiSelect,dropdown
+      // if has ratingLimit => rating question hasLabels || no
+      let optionsList =
+        //  questionBasicInfoObj.answers?.length
+        //   ? questionBasicInfoObj.answers
+        //   : questionBasicInfoObj.hasLabels
+        //   ? [...new Array(questionBasicInfoObj.ratingLimit)].map(
+        //       (elem, index) => ({
+        //         value: `${index + 1}`,
+        //         label: questionBasicInfoObj.labels[index + 1].val,
+        //       })
+        //     )
+        //   :
+        [...new Array(questionBasicInfoObj?.ratingLimit)].map(
+          (rate, index) => ({
+            value: index + 1,
+            label: index + 1,
+          })
+        );
+
+      setAnswersOptions([...optionsList]);
+    }
+  }, [questionBasicInfoObj]);
+
+  /******************** get list of questions => basicinfo and question id only  *************/
+  const getQuestionsList = async () => {
+    // get list once [no real time updates subscription]
+    let tempList = [];
+    const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
+    querySnapshot.forEach((doc) => {
+      let tempElem = document.createElement("div");
+      tempElem.innerHTML = doc.data().title;
+      tempList = [
+        ...tempList,
+        {
+          value: doc.data().id,
+          label: tempElem.innerText,
+          isRequired: doc.data().isRequired,
+          questionType: doc.data().questionType,
+        },
+      ];
+      setQuestionsList([...tempList]);
+    });
+  };
+  /******************************* getting question basic info *************************/
+  const getQuestionBasicInfo = async () => {
+    const docRef = doc(
+      DB,
+      BASIC_INFO,
+      `${localStorage.getItem("uid")}-${templateId}-${questionId}`
+    );
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setQuestionBasicInfoObj(docSnap.data());
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  };
 
   // getting question logic
   const getQuestionLogic = async () => {
@@ -55,7 +132,7 @@ const QuestionLogicForm = () => {
     },
   ];
 
-  // action
+  // actions
   const appliedActionsOptions = [
     {
       label: "Skip",
@@ -71,24 +148,10 @@ const QuestionLogicForm = () => {
     },
   ];
 
-  const ratingvaluesOptions = [
-    {
-      value: "1",
-      label: "1",
-    },
-    {
-      value: "2",
-      label: "2",
-    },
-    {
-      value: "3",
-      label: "3",
-    },
-  ];
-
   // condition statment
   const getEquailtyOptions = () => {
-    switch (questionObj?.questionType) {
+    console.log(questionBasicInfoObj?.questionType);
+    switch (questionBasicInfoObj?.questionType) {
       case "rating":
         return [
           {
@@ -141,10 +204,13 @@ const QuestionLogicForm = () => {
           label: "Go to",
           value: "goTo",
         },
-        nextQuestion: null,
+        nextQuestion: {
+          label: null,
+          value: null,
+        },
         selectedAnswer: {
-          value: "",
-          label: "",
+          label: null,
+          value: null,
         },
       },
     ];
@@ -159,28 +225,59 @@ const QuestionLogicForm = () => {
 
   const handleOptionChange = (val, optionType, condIndex = 0) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
+    console.log(optionType);
     switch (optionType) {
       case "conditioningType":
         tempQuestionObj.conditioningType = val;
-        tempQuestionObj.conditions[condIndex].condition = null;
-        tempQuestionObj.conditions[condIndex].selectedAnswer = null;
-        tempQuestionObj.conditions[condIndex].action = null;
-        tempQuestionObj.conditions[condIndex].nextQuestion = null;
+        tempQuestionObj.conditions[condIndex].condition = {
+          label: null,
+          value: null,
+        };
+        tempQuestionObj.conditions[condIndex].selectedAnswer = {
+          label: null,
+          value: null,
+        };
+        tempQuestionObj.conditions[condIndex].action = {
+          label: null,
+          value: null,
+        };
+        tempQuestionObj.conditions[condIndex].nextQuestion = {
+          label: null,
+          value: null,
+        };
         break;
       case "condition":
         tempQuestionObj.conditions[condIndex].condition = val;
-        tempQuestionObj.conditions[condIndex].selectedAnswer = val;
-        tempQuestionObj.conditions[condIndex].action = val;
-        tempQuestionObj.conditions[condIndex].nextQuestion = val;
+        tempQuestionObj.conditions[condIndex].selectedAnswer = {
+          label: null,
+          value: null,
+        };
+        tempQuestionObj.conditions[condIndex].action = {
+          label: null,
+          value: null,
+        };
+        tempQuestionObj.conditions[condIndex].nextQuestion = {
+          label: null,
+          value: null,
+        };
         break;
       case "selectedAnswer":
         tempQuestionObj.conditions[condIndex].selectedAnswer = val;
-        tempQuestionObj.conditions[condIndex].action = val;
-        tempQuestionObj.conditions[condIndex].nextQuestion = val;
+        tempQuestionObj.conditions[condIndex].action = {
+          label: null,
+          value: null,
+        };
+        tempQuestionObj.conditions[condIndex].nextQuestion = {
+          label: null,
+          value: null,
+        };
         break;
       case "action":
         tempQuestionObj.conditions[condIndex].action = val;
-        tempQuestionObj.conditions[condIndex].nextQuestion = null;
+        tempQuestionObj.conditions[condIndex].nextQuestion = {
+          label: null,
+          value: null,
+        };
         break;
       case "question":
         tempQuestionObj.conditions[condIndex].nextQuestion = val;
@@ -188,6 +285,7 @@ const QuestionLogicForm = () => {
       default:
         return;
     }
+    console.log(tempQuestionObj);
     setQuestionObj({ ...tempQuestionObj });
   };
 
@@ -214,7 +312,7 @@ const QuestionLogicForm = () => {
                 {/* the answer which selected will make the condition true  */}
                 <span>answer</span>
                 <SelectMenu
-                  options={ratingvaluesOptions}
+                  options={answersOptions}
                   defaultValue={cond.selectedAnswer}
                   value={cond.selectedAnswer}
                   handleOptionChange={(e) =>
@@ -224,24 +322,27 @@ const QuestionLogicForm = () => {
               </div>
             </div>
           )}
-          {/* Applied action  */}
-          <p>Apply these action</p>
+          {/* Applied action skip || got to || end survey  */}
+          <p>Apply this action</p>
           <SelectMenu
             options={appliedActionsOptions}
             defaultValue={cond.action}
             value={cond.action}
             handleOptionChange={(e) => handleOptionChange(e, "action", index)}
           />
-          {/* questions list */}
+          {/* questions list [choose questio to skip or to move forward to it] */}
           {(cond.action?.value === "goTo" || cond.action?.value === "skip") && (
-            <SelectMenu
-              options={appliedActionsOptions}
-              defaultValue={cond.action}
-              value={cond.action}
-              handleOptionChange={(e) =>
-                handleOptionChange(e, "question", index)
-              }
-            />
+            <>
+              <p>Question</p>
+              <SelectMenu
+                options={questionsList}
+                defaultValue={cond.nextQuestion}
+                value={cond.nextQuestion}
+                handleOptionChange={(e) =>
+                  handleOptionChange(e, "question", index)
+                }
+              />
+            </>
           )}
           {questionObj?.conditions.length > 1 && (
             <p onClick={(e) => deleteCondition(e, index)}>delte condition</p>
@@ -253,11 +354,14 @@ const QuestionLogicForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("submit", questionObj);
     // get doc ref
     let templateQuestionsRef = doc(
       DB,
       LOGIC,
-      `${localStorage.getItem("uid")}-${templateId}-${questionObj?.id}`
+      `${localStorage.getItem("uid")}-${templateId}-${
+        questionBasicInfoObj?.questionId
+      }`
     );
     // always setDoc
     // if first time to add logic ||  overWriting the existing logic object
@@ -281,15 +385,31 @@ const QuestionLogicForm = () => {
 
   const handleRemoveAll = () => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-    tempQuestionObj.conditioningType = null;
+    tempQuestionObj.conditioningType = {
+      label: null,
+      value: null,
+    };
     tempQuestionObj.conditions = [
       {
-        condition: null,
-        action: null,
-        nextQuestion: null,
-        selectedAnswer: null,
+        condition: {
+          label: null,
+          value: null,
+        },
+        action: {
+          label: null,
+          value: null,
+        },
+        nextQuestion: {
+          label: null,
+          value: null,
+        },
+        selectedAnswer: {
+          label: null,
+          value: null,
+        },
       },
     ];
+    console.log(tempQuestionObj);
     setQuestionObj({ ...tempQuestionObj });
   };
 
@@ -325,7 +445,9 @@ const QuestionLogicForm = () => {
   return (
     <>
       <div className="col-md-3">
-        <p onClick={(e) => handlePopOverModalState(e)}>logic</p>
+        {questionBasicInfoObj?.title && (
+          <p onClick={(e) => handlePopOverModalState(e)}>logic</p>
+        )}
       </div>
       {/* Logic popover */}
       {popOverState && (

@@ -11,37 +11,37 @@ const RatingQuestionTemplate = ({
     <>
       <TextEditor
         handleEditorChange={handleQuestionChange}
-        initialValue={questionObj?.basicInfo?.title}
+        initialValue={questionObj?.title}
       />
       <RatingComponent
-        hasLabels={questionObj?.basicInfo?.labels}
+        hasLabels={questionObj?.labels}
         questionObj={questionObj}
         readOnly={false}
         handleIsRatingHasLabels={handleIsRatingHasLabels}
       />
       <div className="d-flex">
         <label>Has labels ??</label>
-        <input onChange={handleIsRatingHasLabels} type="checkbox" />
+        <input
+          onChange={handleIsRatingHasLabels}
+          type="checkbox"
+          checked={questionObj?.hasLabels}
+        />
       </div>
       <p>
         Hint: has labels when hoovring on each rate point to represent its
         value/measure
       </p>
-      {questionObj?.basicInfo?.hasLabels &&
-        [...new Array(questionObj?.basicInfo?.ratingLimit)].map(
-          (elm, index) => {
-            return (
-              <input
-                key={`label-${index}`}
-                placeholder={
-                  questionObj?.basicInfo?.labels[index + 1].placeholder
-                }
-                defaultValue={questionObj?.basicInfo?.labels[index + 1].val}
-                onChange={(e) => handleRatingLabelChange(e, index)}
-              />
-            );
-          }
-        )}
+      {questionObj?.hasLabels &&
+        [...new Array(questionObj?.ratingLimit)].map((elm, index) => {
+          return (
+            <input
+              key={`label-${index}`}
+              placeholder={questionObj?.labels[index + 1].placeholder}
+              defaultValue={questionObj?.labels[index + 1].val}
+              onChange={(e) => handleRatingLabelChange(e, index)}
+            />
+          );
+        })}
     </>
   );
 };

@@ -15,12 +15,10 @@ const RatingComponent = ({
   const [hover, setHover] = useState(1);
   const StyledRating = styled(Rating)({
     "& .MuiRating-iconFilled": {
-      color:
-        questionObj?.basicInfo?.ratingIcon === "hearts" ? "#ff3d47" : "#faaf00",
+      color: questionObj?.ratingIcon === "hearts" ? "#ff3d47" : "#faaf00",
     },
     "& .MuiRating-iconHover": {
-      color:
-        questionObj?.basicInfo?.ratingIcon === "hearts" ? "#ff3d47" : "#faaf00",
+      color: questionObj?.ratingIcon === "hearts" ? "#ff3d47" : "#faaf00",
     },
   });
 
@@ -30,13 +28,15 @@ const RatingComponent = ({
         "& > legend": { mt: 2 },
       }}
     >
-      {hasLabels && hover && (
+      <div>
         <p sx={{ ml: 2 }}>
-          {questionObj?.basicInfo?.labels[
-            hover !== -1 ? hover : questionObj?.basicInfo?.rate
-          ]?.val || ""}
+          {hasLabels &&
+            hover &&
+            (questionObj?.labels[hover !== -1 ? hover : questionObj?.rate]
+              ?.val ||
+              " ")}
         </p>
-      )}
+      </div>
 
       <StyledRating
         onChangeActive={(event, newHover) => {
@@ -45,18 +45,18 @@ const RatingComponent = ({
         onChange={(e, newVal) => handleRatingChange(e, newVal)}
         name="rating"
         defaultValue={0}
-        value={questionObj?.basicInfo?.rate}
-        max={questionObj?.basicInfo?.ratingLimit}
+        value={questionObj?.rate}
+        max={questionObj?.ratingLimit}
         readOnly={readOnly}
         icon={
-          questionObj?.basicInfo?.ratingIcon === "hearts" ? (
+          questionObj?.ratingIcon === "hearts" ? (
             <FavoriteIcon fontSize="inherit" color="red" />
           ) : (
             <Star fontSize="inherit" />
           )
         }
         emptyIcon={
-          questionObj?.basicInfo?.ratingIcon === "hearts" ? (
+          questionObj?.ratingIcon === "hearts" ? (
             <FavoriteBorderIcon fontSize="inherit" />
           ) : (
             <Star fontSize="inherit" />

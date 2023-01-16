@@ -140,14 +140,17 @@ const BranchingFlowTab = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionsListBasicInfo, questionsListLogic]);
-console.log(questionsListLogic)
+
+  console.log(questionsListLogic);
   // prepare nodes
   const convertQuestionsToNodes = () => {
-    let nodesList = questionsListBasicInfo.map((q) => ({
+    let distance = 50;
+    let nodesList = questionsListBasicInfo.map((q, index) => ({
       id: q.questionId,
       data: { label: q.title },
       deletable: false,
-      position: q.isStart ? { x: 0, y: 0 } : { x: 30, y: 30 },
+      // position: q.isStart ? { x: 0 , y: 0 } : { x: 30, y: 30 },
+      position: { x: index * distance, y: index * distance },
       type: q.isStart ? "input" : "default", //edge go away of it not to it [act as parent]
     }));
     console.log(nodesList);

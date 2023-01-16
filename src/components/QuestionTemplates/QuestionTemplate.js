@@ -17,10 +17,10 @@ const RadioquestionObj = ({
       <br />
       <h2 onClick={(e) => handleAddNewAnswer(e)}>add answer</h2>
       {questionObj?.answers.map((ans, answerIndex) => (
-        <div key={`question-${questionObj.id}-answer-${ans?.id}`}>
+        <div key={`question-${questionObj.id}-answer-${ans?.value}`}>
           <input
-            defaultValue={ans?.content}
-            name={`question-${questionObj.id}-answer-${ans?.id}`}
+            defaultValue={ans?.label}
+            name={`question-${questionObj.id}-answer-${ans?.value}`}
             onChange={(e) => handleAnswerChange(e, answerIndex, "radio")}
           />
 

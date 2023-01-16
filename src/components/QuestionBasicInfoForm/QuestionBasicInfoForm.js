@@ -16,7 +16,6 @@ import QuestionTypes from "../questionTypes/questionTypes";
 const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
   const navigate = useNavigate();
   const [questionObj, setQuestionObj] = useState(null);
-
   useEffect(() => {
     let mounted = true;
     if (mode === "add") {
@@ -69,7 +68,7 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
               questionObj.questionType,
               questionObj.id,
               questionObj.questionType === "rating"
-                ? questionObj.answers[0]
+                ? { value: "", label: "" }
                 : null
             ),
           })
@@ -149,11 +148,8 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     tempQuestionObj.labels[labelIndex + 1].val = e.target.value;
     setQuestionObj({ ...tempQuestionObj });
   };
-  console.log(mode);
-  console.log(questionObj);
   /******************************* get question template  ***********************************/
   const renderQuestion = () => {
-    console.log(questionObj);
     switch (questionObj?.questionType) {
       case "dropdown":
       case "multiSelect":
@@ -204,8 +200,8 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
   const handleAddNewAnswer = (e) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
     tempQuestionObj.answers.push({
-      content: "",
-      id: generateNewID("answer"),
+      label: "",
+      value: generateNewID("answer"),
     });
     setQuestionObj({ ...tempQuestionObj });
   };
@@ -217,7 +213,7 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     // to know the survey start point
   };
 
-  // getting question basic info
+  /******************************* getting question basic info *************************/
   const getQuestionBasicInfo = async () => {
     const docRef = doc(
       DB,
@@ -227,7 +223,6 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log("question data:", docSnap.data());
       setQuestionObj(docSnap.data());
     } else {
       // doc.data() will be undefined in this case
@@ -242,7 +237,12 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
       case "dropdown":
       case "multiSelect":
         let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
-        tempQuestionObj.answers[answerIndex].content = e.target.value;
+        console.log("answerIndex", answerIndex);
+        console.log("questionType", questionType);
+        console.log("tempQuestionObj", tempQuestionObj);
+        console.log("e.target.value", e.target.value);
+
+        tempQuestionObj.answers[answerIndex].label = e.target.value;
         setQuestionObj({ ...tempQuestionObj });
         break;
       default:

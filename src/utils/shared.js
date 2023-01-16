@@ -79,12 +79,12 @@ const generateNewQuestionObj = (questionType) => {
         questionType,
         answers: [
           {
-            id: generateNewID("answer"),
-            content: "Yes",
+            value: generateNewID("answer"),
+            label: "Yes",
           },
           {
-            id: generateNewID("answer"),
-            content: "No",
+            value: generateNewID("answer"),
+            label: "No",
           },
         ],
         // },
@@ -159,13 +159,22 @@ const generateNewQuestionLogicObj = (questionType, questionId, firstAnswer) => {
         },
         conditions: [
           {
-            condition: null,
-            action: {
-              label: "End survey",
-              value: "endSurvey",
+            condition: {
+              label: null,
+              value: null,
             },
-            nextQuestion: null,
-            selectedAnswer: null,
+            action: {
+              label: null,
+              value: null,
+            },
+            nextQuestion: {
+              label: null,
+              value: null,
+            },
+            selectedAnswer: {
+              label: null,
+              value: null,
+            },
           },
         ],
       };
@@ -173,21 +182,27 @@ const generateNewQuestionLogicObj = (questionType, questionId, firstAnswer) => {
       return {
         questionId,
         conditioningType: {
-          label: "If",
-          value: "if",
+          label: "Always", //default
+          value: "always",
         },
         conditions: [
           {
             condition: {
-              label: "Equals to", //default
-              value: "equalsTo",
+              label: null,
+              value: null,
             },
             action: {
-              label: "End survey",
-              value: "endSurvey",
+              label: null,
+              value: null,
             },
-            nextQuestion: null,
-            selectedAnswer: firstAnswer,
+            nextQuestion: {
+              label: null,
+              value: null,
+            },
+            selectedAnswer: {
+              label: null,
+              value: null,
+            },
           },
         ],
       };

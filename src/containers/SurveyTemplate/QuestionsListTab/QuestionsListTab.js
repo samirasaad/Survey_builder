@@ -23,7 +23,7 @@ const QuestionsListTab = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /******************** get list of questins => basicinfo and question id only  *************/
+  /******************** get list of questions => basicinfo and question id only  *************/
   const getQuestionsBasicInfo = async () => {
     // get list once [no real time updates subscription]
     let tempList = JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
