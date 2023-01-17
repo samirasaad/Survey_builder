@@ -83,7 +83,7 @@ const QuestionLogicForm = () => {
       setQuestionsList([...tempList]);
     });
   };
-  /******************************* getting question basic info *************************/
+  /******************************* getting current question basic info *************************/
   const getQuestionBasicInfo = async () => {
     const docRef = doc(
       DB,
@@ -100,7 +100,7 @@ const QuestionLogicForm = () => {
     }
   };
 
-  // getting question logic
+  /******************************** getting current question logic  ************************/
   const getQuestionLogic = async () => {
     const docRef = doc(
       DB,
