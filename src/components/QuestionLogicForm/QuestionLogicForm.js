@@ -78,8 +78,6 @@ const QuestionLogicForm = () => {
         {
           value: doc.data().id,
           label: tempElem.innerText,
-          isRequired: doc.data().isRequired,
-          questionType: doc.data().questionType,
         },
       ];
       setQuestionsList([...tempList]);

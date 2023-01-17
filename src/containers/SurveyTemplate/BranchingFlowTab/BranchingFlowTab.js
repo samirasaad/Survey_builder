@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import ReactFlow, {
   Controls,
   Background,
@@ -15,6 +15,7 @@ import "reactflow/dist/style.css";
 import "./BranchingFlowTab.css";
 import { DB } from "./../../../firebase";
 import { BASIC_INFO, LOGIC } from "./../../../utils/constants";
+import FloatingEdge from "./FloatingEdge/FloatingEdge";
 
 const defaultEdgeOptions = {
   style: { strokeWidth: 2, stroke: "#09c809" },
@@ -79,7 +80,9 @@ const initialEdges = [
     deletable: false,
     source: "1",
     target: "2",
-    label: <button>'label with styled bg'</button>,
+    label: (
+      <button onClick={(e) => console.log(e)}>'label with styled bg'</button>
+    ),
     labelBgPadding: [8, 4],
     labelBgBorderRadius: 4,
     labelBgStyle: { fill: "#FFCC00", color: "#fff", fillOpacity: 0.7 },
@@ -118,6 +121,14 @@ const BranchingFlowTab = () => {
   const [edges, setEdges] = useState(initialEdges);
   const [questionsListBasicInfo, setQuestionsListBasicInfo] = useState(null);
   const [questionsListLogic, setQuestionsListLogic] = useState(null);
+  let currentYPosition = useRef(0); //0 is intail value
+  let currentXPosition = useRef(0); //0 is intail value
+  const edgeTypes = {
+    floating: FloatingEdge,
+  };
+
+  let positionX = 0;
+  let positionY = 0;
 
   useEffect(() => {
     let mounted = true;
@@ -141,46 +152,57 @@ const BranchingFlowTab = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questionsListBasicInfo, questionsListLogic]);
 
-  console.log(questionsListLogic);
   // prepare nodes
   const convertQuestionsToNodes = () => {
-    let distance = 50;
-    let nodesList = questionsListBasicInfo.map((q, index) => ({
-      id: q.questionId,
-      data: { label: q.title },
-      deletable: false,
-      // position: q.isStart ? { x: 0 , y: 0 } : { x: 30, y: 30 },
-      position: { x: index * distance, y: index * distance },
-      type: q.isStart ? "input" : "default", //edge go away of it not to it [act as parent]
-    }));
-    console.log(nodesList);
+    let nodesList = questionsListBasicInfo.map((q, index) => {
+      currentXPosition.current = +currentXPosition.current + 50;
+      currentYPosition.current = +currentYPosition.current + 50;
+      positionX = positionX + 50;
+      positionY = positionY + 150;
+      return {
+        id: q.questionId,
+        data: { label: q.title },
+        deletable: false,
+        position: q.isStart
+          ? { x: 0, y: 0 }
+          : {
+              x: positionX,
+              y: positionY,
+            },
+
+        type: q.isStart ? "input" : "default", //edge go away of it not to it [act as parent]
+      };
+    });
+
     setNodes([...nodesList]);
   };
 
   // prepare edges
   const prepareEdges = () => {
-    let edgesList = questionsListLogic.map((q) => ({
-      id: q.questionId,
-      deletable: false,
-      source: "1",
-      target: "4",
-      label: "label with styled bg",
-      labelBgPadding: [8, 4],
-      labelBgBorderRadius: 4,
-      labelBgStyle: { fill: "#FFCC00", color: "#fff", fillOpacity: 0.7 },
-      animated: true,
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: "#FF0072",
-      },
-    }));
-    console.log(edgesList);
-    setEdges([...edgesList]);
+    let edgesList = questionsListLogic.map((q) => {
+      return q.conditions.map((cond) => ({
+        id: q.questionId,
+        deletable: false,
+        source: q.questionId,
+        target: cond.nextQuestion?.value,
+        label: "label with styled bg",
+        labelBgPadding: [8, 4],
+        labelBgBorderRadius: 4,
+        labelBgStyle: { fill: "#FFCC00", color: "#fff", fillOpacity: 0.7 },
+        animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: "#FF0072",
+        },
+      }));
+    });
+    // to merge array of arrays retrievd from previous process
+    setEdges([...edgesList.flat(1)]);
   };
 
-  /******************** get list of questins => basicinfo and question id only  *************/
+  /******************** get list of questions => basicinfo only *************/
   const getQuestionsBasicInfo = async () => {
     // get list once [no real time updates subscription]
     let tempList = JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
@@ -233,6 +255,7 @@ const BranchingFlowTab = () => {
         nodes={nodes}
         onNodesChange={onNodesChange}
         edges={edges}
+        edgeTypes={edgeTypes}
         onEdgesChange={onEdgesChange}
         defaultEdgeOptions={defaultEdgeOptions}
         nodeTypes={nodeTypes}
