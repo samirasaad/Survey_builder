@@ -89,7 +89,7 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
         templateId,
         questionId: questionObj.id,
         timestamp: Math.floor(new Date().getTime() / 1000),
-        isStart: questionsList?.length ? false : true,
+        isStart: questionsListBasicInfo?.length ? false : true,
         ...questionObj,
       })
         .then((res) => {

@@ -41,7 +41,6 @@ const QuestionsListTab = () => {
   const getQuestionsListBasicInfo = async () => {
     // get list once [no real time updates subscription]
     let tempQuestionsList = [];
-    // JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
     const q = query(
       collection(DB, BASIC_INFO),
       where("templateId", "==", localStorage.getItem("templateId"))

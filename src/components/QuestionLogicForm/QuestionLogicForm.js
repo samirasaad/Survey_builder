@@ -80,6 +80,7 @@ const QuestionLogicForm = () => {
         {
           value: doc.data().id,
           label: tempElem.innerText,
+          timestamp: doc.data().timestamp,
         },
       ];
     });

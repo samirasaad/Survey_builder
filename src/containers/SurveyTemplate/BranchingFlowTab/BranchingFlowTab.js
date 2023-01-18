@@ -9,7 +9,7 @@ import ReactFlow, {
   useEdgesState,
   MarkerType,
 } from "reactflow";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import CustomNode from "./CustomNode/CustomNode";
 import "reactflow/dist/style.css";
 import "./BranchingFlowTab.css";
@@ -134,7 +134,8 @@ const BranchingFlowTab = () => {
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      getQuestionsBasicInfo();
+      getQuestionsListBasicInfo();
+      // getQuestionsBasicInfo();
       getQuestionsLogic();
     }
     return () => {
@@ -197,7 +198,7 @@ const BranchingFlowTab = () => {
   const prepareEdges = () => {
     let edgesList = questionsListLogic.map((q, qIndex) => {
       return q.conditions.map((cond, condIndex) => ({
-        id: `q.questionId`,
+        id: q.questionId,
         // data: {
         //   sourcePosition:
         //     `${questionsListLogic[qIndex + 1]}`.questionId ===
@@ -228,33 +229,43 @@ const BranchingFlowTab = () => {
   /******************** get list of questions => basicinfo only *************/
   const getQuestionsBasicInfo = async () => {
     // get list once [no real time updates subscription]
-    let tempList = JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
-    const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
+    // let tempList = JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
+    // const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
+    // querySnapshot.forEach((doc) => {
+    //   tempList = [...tempList, doc.data()];
+    //   setQuestionsListBasicInfo([...tempList]);
+    // });
+  };
+
+  /********************************** get list of questions [basic info] *****************************/
+  const getQuestionsListBasicInfo = async () => {
+    // get list once [no real time updates subscription]
+    let tempQuestionsList = [];
+    const q = query(
+      collection(DB, BASIC_INFO),
+      where("templateId", "==", localStorage.getItem("templateId"))
+    );
+    const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      tempList = [...tempList, doc.data()];
-      setQuestionsListBasicInfo([...tempList]);
+      /* sort questions list ascending according to its timestamp [creation date/time]
+         not sorted propely in firestore because firestore sorting docs 
+         as per its numerica/alphabetical doc id*/
+
+      // tempQuestionsList = tempQuestionsList.sort(function (x, y) {
+      //   return x.timestamp - y.timestamp;
+      // });
+
+      tempQuestionsList = [...tempQuestionsList, doc.data()];
+      setQuestionsListBasicInfo([...tempQuestionsList]);
     });
-    /********************* subscriping for real updates [for specific doc] ***************/
-    // onSnapshot(
-    //   doc(
-    //     DB,
-    //     BASIC_INFO,
-    //     "oP7uNHa5TfU04RMiCUQjZAF9b9r1-59066-57832-46135-81598-question-80677-07848-33078"
-    //   ),
-    //   (doc) => {
-    //     console.log("Current data: ", doc.data());
-    //   }
-    // );
   };
 
   /******************************* get questions logic  **********************************/
+  // get list once [no real time updates subscription]
   const getQuestionsLogic = async () => {
-    // get list once [no real time updates subscription]
     let tempList = JSON.parse(JSON.stringify(questionsListLogic)) || [];
     const querySnapshot = await getDocs(collection(DB, LOGIC));
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       tempList = [...tempList, doc.data()];
       setQuestionsListLogic([...tempList]);
     });
