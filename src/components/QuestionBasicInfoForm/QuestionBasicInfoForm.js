@@ -1,6 +1,13 @@
 import Btn from "../../controls/Btn/Btn";
 import { DB } from "../../firebase";
-import { setDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  setDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 import { BASIC_INFO, LOGIC } from "../../utils/constants";
 import {
   generateNewID,
@@ -16,13 +23,19 @@ import QuestionTypes from "../questionTypes/questionTypes";
 const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
   const navigate = useNavigate();
   const [questionObj, setQuestionObj] = useState(null);
+  /* to get list length to handle : 
+   1- isStart for the first question
+   2- in add mode new question number*/
+  const [questionsList, setQuestionsList] = useState(null);
+
   useEffect(() => {
     let mounted = true;
-    if (mode === "add") {
+    if (mounted) {
+      getQuestionsList(); //list of basic info
       // add mode => default question template is radio
-      setQuestionObj(generateNewQuestionObj("radio"));
-    } else if (mode === "edit" && questionId) {
-      if (mounted) {
+      if (mode === "add") {
+        setQuestionObj(generateNewQuestionObj("radio"));
+      } else if (mode === "edit" && questionId) {
         getQuestionBasicInfo();
       }
     }
@@ -32,6 +45,30 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, questionId]);
 
+  /******************** get list of questions => basicinfo list only  *************/
+  const getQuestionsList = async () => {
+    // get list once [no real time updates subscription]
+    let tempList = JSON.parse(JSON.stringify(questionsList)) || [];
+    const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      tempList = [...tempList, doc.data()];
+      setQuestionsList([...tempList]);
+    });
+    /********************* subscriping for real updates [for specific doc] ***************/
+    // onSnapshot(
+    //   doc(
+    //     DB,
+    //     BASIC_INFO,
+    //     "oP7uNHa5TfU04RMiCUQjZAF9b9r1-59066-57832-46135-81598-question-80677-07848-33078"
+    //   ),
+    //   (doc) => {
+    //     console.log("Current data: ", doc.data());
+    //   }
+    // );
+  };
+
+  // submit basic form
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (mode === "add") {
@@ -47,7 +84,8 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
         ownerId: localStorage.getItem("uid"),
         templateId,
         questionId: questionObj.id,
-        // isStart: questionsList?.length ? false : true,
+        timestamp: Math.floor(new Date().getTime() / 1000),
+        isStart: questionsList?.length ? false : true,
         ...questionObj,
       })
         .then((res) => {
@@ -162,6 +200,7 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
               handleAddNewAnswer={handleAddNewAnswer}
               handleDeleteAnswer={handleDeleteAnswer}
               handleQuestionChange={handleQuestionChange}
+              handleIsRequired={handleIsRequired}
             />
           </div>
         );
@@ -250,7 +289,7 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     }
   };
 
-  /************************* handle is rating component has labels , getting labels *********************/
+  /************** handle is rating component has labels and getting labels **************/
   const handleIsRatingHasLabels = (e) => {
     let tempQuestionObj = JSON.parse(JSON.stringify(questionObj));
     tempQuestionObj.hasLabels = e.target.checked;
@@ -258,14 +297,29 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     setQuestionObj({ ...tempQuestionObj });
   };
 
+  /*************************  handle question isRequired  ******************/
+  const handleIsRequired = (e) => {
+    console.log(e.target.checked);
+    setQuestionObj({ ...questionObj, isRequired: e.target.checked });
+  };
+
   return (
     <div className="col-md-9">
+      {/****************************** form title ******************************/}
+      <p>{mode === "add" ? " Add new question" : "Edit question"}</p>
+      {/**************************  question number  ***************************/}
+      {mode === "add" ? (
+        <p>Q - {questionsList ? questionsList?.length + 1 : 1}</p>
+      ) : (
+        <p>Q -{questionsList?.findIndex(q=>q.questionId === questionObj?.questionId)+1}</p>
+      )}
       <div className="row">
-        {/* Questions types */}
+        {/********************** Questions types ******************************/}
         <QuestionTypes addQuestion={addQuestion} className="col-md-3" />
-        {/* basic info form  */}
+        {/************************** basic info form  *************************/}
         <form onSubmit={handleSubmit} className="col-md-9">
           {renderQuestion()}
+          {/************************** form actions ***************************/}
           <Btn content="Save" handleClick={handleSubmit} type="submit" />
           <Btn content="Cancel" handleClick={handleCancelEditingQuestion} />
         </form>

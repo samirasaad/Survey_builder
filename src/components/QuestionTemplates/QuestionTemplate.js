@@ -1,12 +1,14 @@
 import React from "react";
 import TextEditor from "../../components/sharedUi/TextEditor/TextEditor";
 
-const RadioquestionObj = ({
+// QuestionTemplate  is template for radio, single select[dropdown] and multi select questions
+const QuestionTemplate = ({
   questionObj,
   handleQuestionChange,
   handleAnswerChange,
   handleAddNewAnswer,
   handleDeleteAnswer,
+  handleIsRequired,
 }) => {
   return (
     <>
@@ -15,6 +17,14 @@ const RadioquestionObj = ({
         initialValue={questionObj?.title}
       />
       <br />
+      <label>Is required</label>
+      <input
+        onChange={handleIsRequired}
+        type="checkbox"
+        checked={questionObj?.isRequired}
+      />
+      <br />
+
       <h2 onClick={(e) => handleAddNewAnswer(e)}>add answer</h2>
       {questionObj?.answers.map((ans, answerIndex) => (
         <div key={`question-${questionObj.id}-answer-${ans?.value}`}>
@@ -36,4 +46,4 @@ const RadioquestionObj = ({
   );
 };
 
-export default RadioquestionObj;
+export default QuestionTemplate;
