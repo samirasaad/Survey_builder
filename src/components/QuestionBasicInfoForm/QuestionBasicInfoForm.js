@@ -7,6 +7,8 @@ import {
   updateDoc,
   getDocs,
   collection,
+  query,
+  where,
 } from "firebase/firestore";
 import { BASIC_INFO, LOGIC } from "../../utils/constants";
 import {
@@ -26,12 +28,12 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
   /* to get list length to handle : 
    1- isStart for the first question
    2- in add mode new question number*/
-  const [questionsList, setQuestionsList] = useState(null);
+  const [questionsListBasicInfo, setQuestionsListBasicInfo] = useState(null);
 
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      getQuestionsList(); //list of basic info
+      getQuestionsListBasicInfo(); //list of basic info
       // add mode => default question template is radio
       if (mode === "add") {
         setQuestionObj(generateNewQuestionObj("radio"));
@@ -45,27 +47,29 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, questionId]);
 
-  /******************** get list of questions => basicinfo list only  *************/
-  const getQuestionsList = async () => {
+  /**********************************  get list of questions [basic info]  *****************************/
+  const getQuestionsListBasicInfo = async () => {
     // get list once [no real time updates subscription]
-    let tempList = JSON.parse(JSON.stringify(questionsList)) || [];
-    const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
+    let tempQuestionsList = [];
+    // JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
+    const q = query(
+      collection(DB, BASIC_INFO),
+      where("templateId", "==", localStorage.getItem("templateId"))
+    );
+    const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      tempList = [...tempList, doc.data()];
-      setQuestionsList([...tempList]);
+      tempQuestionsList = [...tempQuestionsList, doc.data()];
+
+      /* sort questions list ascending according to its timestamp [creation date/time]
+       not sorted propely in firestore because firestore sorting docs 
+       as per its numerica/alphabetical doc id*/
     });
-    /********************* subscriping for real updates [for specific doc] ***************/
-    // onSnapshot(
-    //   doc(
-    //     DB,
-    //     BASIC_INFO,
-    //     "oP7uNHa5TfU04RMiCUQjZAF9b9r1-59066-57832-46135-81598-question-80677-07848-33078"
-    //   ),
-    //   (doc) => {
-    //     console.log("Current data: ", doc.data());
-    //   }
-    // );
+
+    tempQuestionsList = tempQuestionsList.sort(function (x, y) {
+      return x.timestamp - y.timestamp;
+    });
+
+    setQuestionsListBasicInfo([...tempQuestionsList]);
   };
 
   // submit basic form
@@ -306,12 +310,24 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
   return (
     <div className="col-md-9">
       {/****************************** form title ******************************/}
+      {console.log(
+        questionsListBasicInfo?.findIndex(
+          (q) => q.questionId === questionObj?.questionId
+        )
+      )}
       <p>{mode === "add" ? " Add new question" : "Edit question"}</p>
       {/**************************  question number  ***************************/}
       {mode === "add" ? (
-        <p>Q - {questionsList ? questionsList?.length + 1 : 1}</p>
+        <p>
+          Q - {questionsListBasicInfo ? questionsListBasicInfo?.length + 1 : 1}
+        </p>
       ) : (
-        <p>Q -{questionsList?.findIndex(q=>q.questionId === questionObj?.questionId)+1}</p>
+        <p>
+          Q -
+          {questionsListBasicInfo?.findIndex(
+            (q) => q.questionId === questionObj?.questionId
+          ) + 1}
+        </p>
       )}
       <div className="row">
         {/********************** Questions types ******************************/}

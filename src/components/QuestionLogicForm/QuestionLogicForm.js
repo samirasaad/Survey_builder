@@ -11,6 +11,8 @@ import {
   updateDoc,
   collection,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 
 import { BASIC_INFO, LOGIC } from "./../../utils/constants";
@@ -22,7 +24,7 @@ const QuestionLogicForm = () => {
   const [questionLogicObj, setQuestionLogicObj] = useState(null);
   const [questionBasicInfoObj, setQuestionBasicInfoObj] = useState(null);
   const [answersOptions, setAnswersOptions] = useState(null);
-  const [questionsList, setQuestionsList] = useState(null);
+  const [questionsListBasicInfo, setQuestionsListBasicInfo] = useState(null);
 
   /* we need question basic info to get answers to use them in logic rules
     we need questions list to use them in go to/ skip questions list in logic rules */
@@ -30,6 +32,7 @@ const QuestionLogicForm = () => {
   useEffect(() => {
     let mounted = true;
     if (mounted) {
+      // specific question basic info and logic
       getQuestionLogic();
       getQuestionBasicInfo();
     }
@@ -42,50 +45,53 @@ const QuestionLogicForm = () => {
   useEffect(() => {
     if (questionBasicInfoObj) {
       /************************** to list all possible next questions *******************/
-      getQuestionsList();
-      /******************  and question answers to make question logic conditions ********/
+      getQuestionsListBasicInfo();
+
+      /****** preparing specific question answers  to handle question logic conditions *****/
       // if question has answers => radio, multiSelect,dropdown
       // if has ratingLimit => rating question hasLabels || no
-      let optionsList =
-        //  questionBasicInfoObj.answers?.length
-        //   ? questionBasicInfoObj.answers
-        //   : questionBasicInfoObj.hasLabels
-        //   ? [...new Array(questionBasicInfoObj.ratingLimit)].map(
-        //       (elem, index) => ({
-        //         value: `${index + 1}`,
-        //         label: questionBasicInfoObj.labels[index + 1].val,
-        //       })
-        //     )
-        //   :
-        [...new Array(questionBasicInfoObj?.ratingLimit)].map(
-          (rate, index) => ({
-            value: index + 1,
-            label: index + 1,
-          })
-        );
-
-      setAnswersOptions([...optionsList]);
+      let tempAnswersList =
+        questionBasicInfoObj?.questionType === "rating"
+          ? [...new Array(questionBasicInfoObj?.ratingLimit)].map(
+              (rate, index) => ({
+                value: index + 1,
+                label: index + 1,
+              })
+            )
+          : [...questionBasicInfoObj?.answers];
+      setAnswersOptions([...tempAnswersList]);
     }
   }, [questionBasicInfoObj]);
 
-  /******************** get list of questions => basicinfo and question id only  *************/
-  const getQuestionsList = async () => {
+  /********************************** get list of questions [basic info] *****************************/
+  const getQuestionsListBasicInfo = async () => {
     // get list once [no real time updates subscription]
-    let tempList = [];
-    const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
+    let tempQuestionsList = [];
+    const q = query(
+      collection(DB, BASIC_INFO),
+      where("templateId", "==", localStorage.getItem("templateId"))
+    );
+    const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       let tempElem = document.createElement("div");
       tempElem.innerHTML = doc.data().title;
-      tempList = [
-        ...tempList,
+      tempQuestionsList = tempQuestionsList = [
+        ...tempQuestionsList,
         {
           value: doc.data().id,
           label: tempElem.innerText,
         },
       ];
-      setQuestionsList([...tempList]);
     });
+    /* sort questions list ascending according to its timestamp [creation date/time]
+     not sorted propely in firestore because firestore sorting docs 
+     as per its numerica/alphabetical doc id*/
+    tempQuestionsList = tempQuestionsList.sort(function (x, y) {
+      return x.timestamp - y.timestamp;
+    });
+    setQuestionsListBasicInfo([...tempQuestionsList]);
   };
+
   /******************************* getting current question basic info *************************/
   const getQuestionBasicInfo = async () => {
     const docRef = doc(
@@ -336,7 +342,7 @@ const QuestionLogicForm = () => {
             <>
               <p>Question</p>
               <SelectMenu
-                options={questionsList}
+                options={questionsListBasicInfo}
                 defaultValue={cond.nextQuestion}
                 value={cond.nextQuestion}
                 handleOptionChange={(e) =>

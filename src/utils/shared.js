@@ -1,5 +1,5 @@
 import { DB } from "../firebase";
-import { TEMPLATES } from "./constants";
+import { BASIC_INFO, TEMPLATES } from "./constants";
 import History from "./../routes/History";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
@@ -210,6 +210,8 @@ const generateNewQuestionLogicObj = (questionType, questionId, firstAnswer) => {
       return;
   }
 };
+
+
 
 export {
   handleHomeRedirection,

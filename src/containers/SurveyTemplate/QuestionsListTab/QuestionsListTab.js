@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import Modal from "../../../components/sharedUi/Modal/Modal";
 import SingleQuestion from "./SingleQuestion";
 import Btn from "./../../../controls/Btn/Btn";
 import { DB } from "./../../../firebase";
 import { BASIC_INFO } from "./../../../utils/constants";
+import { getQuestionsListBasicInfo } from "../../../utils/shared";
 
 const QuestionsListTab = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,40 +13,17 @@ const QuestionsListTab = () => {
   const [questionId, setQuestionId] = useState(null);
   const [questionsListBasicInfo, setQuestionsListBasicInfo] = useState(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      getQuestionsBasicInfo();
+      getQuestionsListBasicInfo();
     }
     return () => {
       mounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  console.log(questionsListBasicInfo)
-  /********************************** get list of questions  *****************************/
-  const getQuestionsBasicInfo = async () => {
-    // get list once [no real time updates subscription]
-    let tempList = JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
-    const querySnapshot = await getDocs(collection(DB, BASIC_INFO));
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      tempList = [...tempList, doc.data()];
-      setQuestionsListBasicInfo([...tempList]);
-    });
-    /********************* subscriping for real updates [for specific doc] ***************/
-    // onSnapshot(
-    //   doc(
-    //     DB,
-    //     BASIC_INFO,
-    //     "oP7uNHa5TfU04RMiCUQjZAF9b9r1-59066-57832-46135-81598-question-80677-07848-33078"
-    //   ),
-    //   (doc) => {
-    //     console.log("Current data: ", doc.data());
-    //   }
-    // );
-  };
 
   useEffect(() => {
     if (viewType === "Grid") {
@@ -58,6 +36,31 @@ const QuestionsListTab = () => {
       );
     }
   }, [viewType]);
+
+  /********************************** get list of questions [basic info] *****************************/
+  const getQuestionsListBasicInfo = async () => {
+    // get list once [no real time updates subscription]
+    let tempQuestionsList = [];
+    // JSON.parse(JSON.stringify(questionsListBasicInfo)) || [];
+    const q = query(
+      collection(DB, BASIC_INFO),
+      where("templateId", "==", localStorage.getItem("templateId"))
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      tempQuestionsList = [...tempQuestionsList, doc.data()];
+
+      /* sort questions list ascending according to its timestamp [creation date/time]
+       not sorted propely in firestore because firestore sorting docs 
+       as per its numerica/alphabetical doc id*/
+    });
+
+    tempQuestionsList = tempQuestionsList.sort(function (x, y) {
+      return x.timestamp - y.timestamp;
+    });
+
+    setQuestionsListBasicInfo([...tempQuestionsList]);
+  };
 
   const handleModalState = (e, modalState, questionId) => {
     console.log(questionId);
