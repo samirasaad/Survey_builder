@@ -129,6 +129,8 @@ const BranchingFlowTab = () => {
   let positionX = 0;
   let positionY = 0;
 
+  const snapGrid = [20, 20];
+
   useEffect(() => {
     let mounted = true;
     if (mounted) {
@@ -142,7 +144,7 @@ const BranchingFlowTab = () => {
   }, []);
 
   useEffect(() => {
-    if (questionsListBasicInfo) {
+    if (questionsListBasicInfo && questionsListLogic) {
       convertQuestionsToNodes();
     }
     if (questionsListLogic) {
@@ -153,21 +155,30 @@ const BranchingFlowTab = () => {
 
   // prepare nodes
   const convertQuestionsToNodes = () => {
+    // array holds conditions arrays from all questions => array of objects for conditions
+    let tempArr = questionsListLogic.map((q) => q.conditions).flat(1);
+    // getting number of how many times a question used as nextQuestion
+    // to calculate number of target handlers
+    let numOfTargetHandlers = questionsListLogic.map((q) =>
+      tempArr.filter((c) => c.nextQuestion.value === q.questionId)
+    );
     let nodesList = questionsListBasicInfo.map((q, index) => {
       return {
-        id: q.questionId,
+        id: q.questionId, //same id in edge object for key source
+
+        // extent: 'parent',
+
         // data is an object holds all info we need to render in node container
         // we can name objcet keys whtaever we want and use same keys in custom node file
         data: {
           label: q.title,
           isStart: q.isStart,
-
+          sourceHandlersNum: questionsListLogic[index]?.conditions?.length,
+          targetHandlersNum: numOfTargetHandlers[index]?.length,
+          // targetHandeID: q.questionId,
           renderNodeContent: () => renderNodeContent(q),
         },
         deletable: false,
-        sourcePosition: "right",
-        targetPosition: "left",
-
         type: "customNode",
         isConnectable: false,
         position: q.isStart
@@ -186,15 +197,17 @@ const BranchingFlowTab = () => {
   const prepareEdges = () => {
     let edgesList = questionsListLogic.map((q, qIndex) => {
       return q.conditions.map((cond, condIndex) => ({
-        id: q.questionId,
+        id: `q.questionId`,
         // data: {
         //   sourcePosition:
         //     `${questionsListLogic[qIndex + 1]}`.questionId ===
         //     cond.nextQuestion? 'left' :'bottom'
         // },
         deletable: false,
-        source: q.questionId, //source id
-        target: cond.nextQuestion?.value, // target id
+        source: q.questionId, //source id [source node] same id in node object for key id
+        target: cond.nextQuestion?.value, // target id [end node id] [id of a node to go for it]
+        sourceHandle: `source-handle-${condIndex}`, //same id as <Handle>  with type source takes in custom nodes
+        targetHandle: `target-handle-${condIndex}`, //same id as <Handle>  with type target takes in custom nodes
         label: "",
         labelBgPadding: [8, 4],
         labelBgBorderRadius: 4,
@@ -272,6 +285,7 @@ const BranchingFlowTab = () => {
   return (
     <div style={{ height: "900px" }}>
       {/* <img src={endSurvey} id="end" /> */}
+      {console.log(nodes)}
       <ReactFlow
         nodes={nodes}
         onNodesChange={onNodesChange}
@@ -281,6 +295,8 @@ const BranchingFlowTab = () => {
         nodeTypes={nodeTypes}
         attributionPosition="bottom-left"
         fitView
+        snapToGrid={true}
+        // snapGrid={snapGrid}
       >
         <Background variant="dots" gap={12} size={1} color={"gray"} />
         <Controls showInteractive={false} />
