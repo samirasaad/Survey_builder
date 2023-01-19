@@ -6,6 +6,7 @@ import { collection, getDocs } from "firebase/firestore";
 import HorizontalTabs from "../../components/HorizontalTabs/HorizontalTabs";
 import BranchingFlowTab from "./BranchingFlowTab/BranchingFlowTab";
 import QuestionsListTab from "./QuestionsListTab/QuestionsListTab";
+import BranchingFlowTabCopy from "./BranchingFlowTab/BranchingFlowTabCopy";
 
 
 const SurveyTemplate = () => {
@@ -28,7 +29,9 @@ const SurveyTemplate = () => {
       id: 1,
       title: "branching/logic",
       icon: <PersonPinIcon />,
-      content: <BranchingFlowTab />,
+      // content: <BranchingFlowTab />,
+      content: <BranchingFlowTabCopy/>,
+      
     },
   ];
 
