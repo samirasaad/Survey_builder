@@ -33,10 +33,10 @@ const PrivateRoute = ({ children }) => {
           <TemplateHeader />
           <Btn content="logout" handleClick={handleLogout} />
           <div className="row">
-            <div className="col-3">
+            <div className="col-md-2">
               <SideMenu />
             </div>
-            <div className="col-9">{children}</div>
+            <div className="col-md-10">{children}</div>
           </div>
 
           {/* <Footer /> */}

@@ -8,6 +8,7 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   MarkerType,
+  MiniMap,
 } from "reactflow";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import CustomNode from "./CustomNode/CustomNode";
@@ -123,8 +124,6 @@ const BranchingFlowTab = () => {
   const [edges, setEdges] = useState([]);
   const [questionsListBasicInfo, setQuestionsListBasicInfo] = useState(null);
   const [questionsListLogic, setQuestionsListLogic] = useState(null);
-  let currentYPosition = useRef(0); //0 is intail value
-  let currentXPosition = useRef(0); //0 is intail value
 
   let positionX = 0;
   let positionY = 0;
@@ -147,8 +146,6 @@ const BranchingFlowTab = () => {
   useEffect(() => {
     if (questionsListBasicInfo && questionsListLogic) {
       convertQuestionsToNodes();
-    }
-    if (questionsListLogic) {
       prepareEdges();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -185,7 +182,7 @@ const BranchingFlowTab = () => {
         position: q.isStart
           ? { x: 0, y: 0 }
           : {
-              x: positionX + (200 * index + 1),
+              x: positionX + 200 * (index + 1),
               y: 0,
             },
       };
@@ -250,10 +247,9 @@ const BranchingFlowTab = () => {
       /* sort questions list ascending according to its timestamp [creation date/time]
          not sorted propely in firestore because firestore sorting docs 
          as per its numerica/alphabetical doc id*/
-
-      // tempQuestionsList = tempQuestionsList.sort(function (x, y) {
-      //   return x.timestamp - y.timestamp;
-      // });
+      tempQuestionsList = tempQuestionsList.sort(function (x, y) {
+        return x.timestamp - y.timestamp;
+      });
 
       tempQuestionsList = [...tempQuestionsList, doc.data()];
       setQuestionsListBasicInfo([...tempQuestionsList]);
@@ -293,11 +289,15 @@ const BranchingFlowTab = () => {
     );
   };
 
+  const onInit = (reactFlowInstance) =>
+    console.log("flow loaded:", reactFlowInstance);
+
   return (
     <div style={{ height: "900px" }}>
       {/* <img src={endSurvey} id="end" /> */}
       {console.log(nodes)}
       <ReactFlow
+        onInit={onInit}
         nodes={nodes}
         onNodesChange={onNodesChange}
         edges={edges}
@@ -306,11 +306,27 @@ const BranchingFlowTab = () => {
         nodeTypes={nodeTypes}
         attributionPosition="bottom-left"
         fitView
-        snapToGrid={true}
-        // snapGrid={snapGrid}
+        // snapToGrid={true}
+        // // snapGrid={snapGrid}
+        // elementsSelectable={isSelectable}
+        // nodesConnectable={isConnectable}
+        // nodesDraggable={isDraggable}
+        // zoomOnScroll={zoomOnScroll}
+        // panOnScroll={panOnScroll}
+        // panOnScrollMode={panOnScrollMode}
+        // zoomOnDoubleClick={zoomOnDoubleClick}
+        // onConnect={onConnect}
+        // onNodeClick={captureElementClick ? onNodeClick : undefined}
+        // onNodeDragStart={onNodeDragStart}
+        // onNodeDragStop={onNodeDragStop}
+        // panOnDrag={panOnDrag}
+        // onPaneClick={captureZoomClick ? onPaneClick : undefined}
+        // onPaneScroll={captureZoomScroll ? onPaneScroll : undefined}
+        // onPaneContextMenu={captureZoomClick ? onPaneContextMenu : undefined}
       >
         <Background variant="dots" gap={12} size={1} color={"gray"} />
         <Controls showInteractive={false} />
+        {/* <MiniMap /> */}
       </ReactFlow>
     </div>
   );

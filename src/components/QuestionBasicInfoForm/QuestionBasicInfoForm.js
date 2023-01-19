@@ -310,11 +310,6 @@ const QuestionBasicInfoForm = ({ mode, templateId, questionId }) => {
   return (
     <div className="col-md-9">
       {/****************************** form title ******************************/}
-      {console.log(
-        questionsListBasicInfo?.findIndex(
-          (q) => q.questionId === questionObj?.questionId
-        )
-      )}
       <p>{mode === "add" ? " Add new question" : "Edit question"}</p>
       {/**************************  question number  ***************************/}
       {mode === "add" ? (
