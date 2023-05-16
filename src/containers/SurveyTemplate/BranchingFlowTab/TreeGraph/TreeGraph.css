@@ -1,34 +1,37 @@
-.node circle {
-  fill: rgb(247, 106, 214);
-  stroke: rgb(184, 37, 81);
-  stroke-width: 1.5px;
+.App {
+  font-family: sans-serif;
+  text-align: center;
 }
 
-.node text {
-  font-size: 11px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background-color: black;
-  fill: black;
+/* custom-tree.css */
+
+.node__root > circle {
+  fill: red;
 }
 
-.node {
-  cursor: pointer;
+.node__branch > circle {
+  fill: yellow;
 }
 
-path.link {
-  fill: none;
-  stroke: #2593b8;
-  stroke-width: 1.5px;
+.node__leaf > circle {
+  fill: rgb(128, 26, 0);
+  /* Let's also make the radius of leaf nodes larger */
+  r: 40;
 }
 
-body {
-  background-color: white;
-  overflow: hidden;
-}
+.myLabelComponentInSvg {
+  height: 70px;
+  width: 180px;
+  margin: 10px;
 
-span {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #f4f4f4;
-  text-shadow: 0 1px 4px black;
-  float: right;
+  background: "#ffffff";
+  height: "70px";
+  border-top: "2px solid #2F80ED";
+  text-align: "center";
+  /* // position: "fixed"; */
+  z-index: "1000";
+  /* // left: "-10px"; */
+  box-shadow: "0px 10px 10px rgba(0, 0, 0, 0.1)";
+  padding: "5px 0";
+  border-radius: "5px";
 }

@@ -1,183 +1,242 @@
-import { Tree } from "react-tree-graph";
-import { AnimatedTree } from "react-tree-graph";
-import "react-tree-graph/dist/style.css";
+import React from "react";
+import Tree from "react-d3-tree"; //using v3
 import "./TreeGraph.css";
 
-const CustomLabel = () => {
-  return (
-    <>
-      {/* <rect
-        width="120"
-        height="180"
-        stroke="red"
-        stroke-width="3px"
-        fill="white"
-      />
-      <text x='10' dominant-baseline="middle" text-anchor="middle">
-        TEXT
-      </text> */}
-      <rect fill="green" x="0" y="0" width="200" height="50">
-        <text
-          x="25"
-          y="25"
-          fill="red"
-          text-anchor="middle"
-          alignment-baseline="central"
-        >
-          Christmas Time!
-        </text>
-      </rect>
-    </>
-  );
-};
-
-const x = () => (
-  <div className="custom-container">
-    <AnimatedTree
-      height={400}
-      // Setting a labelProp allows multiple nodes to have the same label
-      // allows labels to be JSX. They must return valid SVG elements
-      labelProp="label"
-      // pathFunc={function noRefCheck(){}}
-      width={600}
-      //   nodeRadius={15}
-      //   margins={{ top: 20, bottom: 10, left: 20, right: 200 }}
-      data={{
-        // children: [
-        //   {
-        //     label: <CustomLabel />,
-        //     name: "Child 1",
-        //     children: [
-        //       {
-        //         label: <CustomLabel />,
-        //         name: "Child 1-1",
-        //       },
-        //     ],
-        //   },
-        //   {
-        //     label: (
-        //       <>
-        //         <rect height="18" width="32" />
-        //         <text>2</text>
-        //       </>
-        //     ),
-        //     name: "Child 2",
-        //   },
-
-        //   {
-        //     label: (
-        //       <>
-        //         <rect height="18" width="32" />
-        //         <text>3</text>
-        //       </>
-        //     ),
-        //     name: "Child 3",
-        //   },
-        //   {
-        //     label: (
-        //       <>
-        //         <rect height="18" width="32" />
-        //         <text>4</text>
-        //       </>
-        //     ),
-        //     name: "Child 4",
-        //   },
-        // ],
-        label: "parent", //start point [question has isStart]
-        name: "Parent",
+const myTreeData = [
+  {
+    name: "Gaurang Torvekar",
+    attributes: {
+      keyA: "val A",
+      keyB: "val B",
+      keyC: "val C",
+    },
+    children: [
+      {
+        name: "Avadhoot",
+        attributes: {
+          keyA: "val A",
+          keyB: "val B",
+          keyC: "val C",
+        },
         children: [
           {
-            name: "Black",
-            label: "Black",
-            pathProps: "orange",
-            children: [],
+            name: "Richard",
           },
           {
-            name: "Blue",
-            label: <CustomLabel />,
-            // textProps: {x: -25, y: 25}, only if label string text
+            name: "Constantine",
             children: [
               {
-                label: "Aquamarine",
-                name: "Aquamarine",
-                children: [],
-              },
-              {
-                label: "Cyan",
-                name: "Cyan",
-                children: [],
-              },
-              {
-                label: "Navy",
-                name: "Navy",
-                children: [],
-              },
-              {
-                label: "Turquoise",
-                name: "Turquoise",
-                children: [],
+                name: "Mia",
               },
             ],
           },
           {
-            label: "Green",
-            name: "Green",
-            children: [],
-          },
-          {
-            label: "Purple",
-            name: "Purple",
-            children: [
-              {
-                name: "Indigo",
-                children: [],
-              },
-              {
-                label: "Violet",
-                name: "Violet",
-                children: [],
-              },
-            ],
-          },
-          {
-            label: "Red",
-            name: "Red",
-            children: [
-              {
-                label: "Crimson",
-                name: "Crimson",
-                children: [],
-              },
-              {
-                label: "Maroon",
-                name: "Maroon",
-                children: [],
-              },
-              {
-                label: "Scarlet",
-                name: "Scarlet",
-                children: [],
-              },
-            ],
-          },
-          {
-            name: "White",
-            label: "White",
-            children: [{
-                label: "Yellow",
-                name: "Yellow",
-                children: [],
-              }],
-          },
-          {
-            label: "Yellow",
-            name: "Yellow",
-            children: [],
+            name: "Daniel",
           },
         ],
-      }}
+      },
+      {
+        name: "Mia",
+      },
+      {
+        name: "Varun",
+        attributes: {
+          keyA: "val A",
+          keyB: "val B",
+          keyC: "val C",
+        },
+        children: [
+          {
+            name: "Ivo",
+            attributes: {
+              keyA: "val A",
+              keyB: "val B",
+              keyC: "val C",
+            },
+            children: [
+              {
+                name: "Level 2: A",
+                attributes: {
+                  keyA: "val A",
+                  keyB: "val B",
+                  keyC: "val C",
+                },
+                children: [
+                  {
+                    name: "Level 2: A",
+                    attributes: {
+                      keyA: "val A",
+                      keyB: "val B",
+                      keyC: "val C",
+                    },
+                  },
+                  {
+                    name: "Level 2: B",
+                  },
+                ],
+              },
+              {
+                name: "Level 2: B",
+              },
+            ],
+          },
+          {
+            name: "Vijay",
+          },
+        ],
+      },
+      {
+        name: "Mohit",
+        children: [
+          {
+            name: "Rohit",
+            attributes: {
+              keyA: "val A",
+              keyB: "val B",
+              keyC: "val C",
+            },
+            children: [
+              {
+                name: "Level 2: A",
+                attributes: {
+                  keyA: "val A",
+                  keyB: "val B",
+                  keyC: "val C",
+                },
+                children: [
+                  {
+                    name: "Level 2: A",
+                    attributes: {
+                      keyA: "val A",
+                      keyB: "val B",
+                      keyC: "val C",
+                    },
+                  },
+                  {
+                    name: "Level 2: B",
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            name: "Pranav",
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const svgSquare = {
+  shape: "rect",
+  shapeProps: {
+    width: 180,
+    height: 40,
+    x: 0,
+    y: -20,
+    color: "#ffffff",
+  },
+};
+
+const test = {
+  shape: "rect",
+  shapeProps: {
+    width: 0,
+    height: 0,
+    x: -20,
+    y: 20,
+    stroke: "#2F80ED",
+  },
+};
+
+const nodeStyle = (
+  <svg viewbox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+    <rect
+      width="80"
+      height="40"
+      x="10"
+      y="10"
+      style="fill: skyblue; stroke: cadetblue; stroke-width: 2;"
     />
-  </div>
+  </svg>
 );
 
-export default x;
+const treeStyle = {
+  nodes: {
+    node: {
+      circle: <nodeStyle />,
+      name: <nodeStyle />,
+      attributes: <nodeStyle />,
+    },
+  },
+};
+
+// class NodeLabel extends React.PureComponent {
+//   render() {
+//     const { className, nodeData } = this.props;
+//     return (
+//       <div
+//         className={className}
+//         style={{
+//           background: "#ffffff",
+//           height: "70px",
+//           borderTop: "2px solid #2F80ED",
+//           textAlign: "center",
+//           // position: "fixed",
+//           zIndex: "1000",
+//           // left: "-10px",
+//           boxShadow: "0px 10px 10px rgba(0, 0, 0, 0.1)",
+//           padding: "5px 0",
+//           borderRadius: "5px"
+//         }}
+//       >
+//         {nodeData.name}
+//       </div>
+//     );
+//   }
+// }
+
+const NodeLabel = ({ className, nodeData }) => {
+console.log(className)
+console.log(nodeData)
+  return (
+    <div className={className}>{nodeData.name}</div>
+  )
+};
+
+function Treeeee() {
+  return (
+    <div className="App">
+      <h1>ORG Chart POC</h1>
+      <div id="treeWrapper" style={{ width: "100%", height: "100vh" }}>
+        <Tree
+          data={myTreeData}
+          // nodeSvgShape={svgSquare}
+          // nodeSvgShape={test}
+          rootNodeClassName="node__root"
+          branchNodeClassName="node__branch"
+          leafNodeClassName="node__leaf"
+          pathFunc="step"
+          separation={{ siblings: 2, nonSiblings: 2 }}
+          orientation="vertical"
+          translate={{ x: 900, y: 100 }}
+          allowForeignObjects={true}
+          CustomNodeElementProps={<NodeLabel className="myLabelComponentInSvg"/>}
+          nodeLabelComponent={{
+            render: <NodeLabel className="myLabelComponentInSvg" />,
+            foreignObjectWrapper: {
+              width: 220,
+              height: 200,
+              y: -50,
+              x: -100,
+            },
+          }}
+          initialDepth={0.02}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default Treeeee;

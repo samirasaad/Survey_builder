@@ -7,6 +7,7 @@ import HorizontalTabs from "../../components/HorizontalTabs/HorizontalTabs";
 import BranchingFlowTab from "./BranchingFlowTab/BranchingFlowTab";
 import QuestionsListTab from "./QuestionsListTab/QuestionsListTab";
 import BranchingFlowTabCopy from "./BranchingFlowTab/BranchingFlowTabCopy";
+import BranchingFlowVerticalTree from "./BranchingFlowTab/BranchingFlowVerticalTree";
 
 
 const SurveyTemplate = () => {
@@ -30,7 +31,7 @@ const SurveyTemplate = () => {
       title: "branching/logic",
       icon: <PersonPinIcon />,
       // content: <BranchingFlowTab />,
-      content: <BranchingFlowTabCopy/>,
+      content: <BranchingFlowVerticalTree/>,
       
     },
   ];
